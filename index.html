@@ -19,42 +19,50 @@
             --msg-tutor: #E8F5E9;
             --msg-sistema: #E3F2FD;
             --msg-studente: #FFF3E0;
+            
+            /* DYNAMIC FONTS DRIVEN BY SETTINGS */
+            --font-family: 'Helvetica', Arial, sans-serif;
+            --font-size-base: 14px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica', Arial, sans-serif; }
-        body { background-color: var(--sfondo-chiaro); color: var(--testo); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
+        body { background-color: var(--sfondo-chiaro); color: var(--testo); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; font-size: var(--font-size-base); }
         
         .container { width: 100%; max-width: 800px; background: var(--sfondo); border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); overflow: hidden; display: none; min-height: 650px; flex-direction: column; }
         .container.active { display: flex; }
 
         /* HEADER */
         .header { background: var(--primario); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .header-title { font-size: 20px; display: flex; align-items: center; gap: 8px; }
-        .header-hud { font-size: 14px; background: rgba(0,0,0,0.15); padding: 5px 12px; border-radius: 20px; }
+        .header-title { font-size: calc(var(--font-size-base) + 6px); display: flex; align-items: center; gap: 8px; }
+        .header-hud { font-size: calc(var(--font-size-base) - 1px); background: rgba(0,0,0,0.15); padding: 5px 12px; border-radius: 20px; }
+        .btn-settings-icon { background: transparent; border: none; color: white; font-size: 22px; cursor: pointer; padding: 0 5px; }
 
         /* LOGIN PAGE */
         .login-wrap { padding: 40px 20px; text-align: center; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; }
-        .login-title { font-size: 32px; font-weight: bold; margin-bottom: 5px; color: var(--testo); }
-        .login-subtitle { font-size: 15px; color: var(--testo-light); margin-bottom: 30px; }
+        .login-header-bar { width: 100%; display: flex; justify-content: flex-end; padding-right: 15px; position: absolute; top: 15px; right: 0; }
+        .btn-settings-black { background: transparent; border: none; color: var(--testo); font-size: 26px; cursor: pointer; }
+        
+        .login-title { font-size: calc(var(--font-size-base) + 16px); font-weight: bold; margin-bottom: 5px; color: var(--testo); }
+        .login-subtitle { font-size: calc(var(--font-size-base) + 1px); color: var(--testo-light); margin-bottom: 30px; }
         
         .tabs { display: flex; width: 100%; max-width: 400px; margin-bottom: 20px; background: #eee; border-radius: 8px; padding: 4px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: bold; cursor: pointer; border-radius: 6px; color: var(--testo-light); }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: bold; cursor: pointer; border-radius: 6px; color: var(--testo-light); font-size: var(--font-size-base); }
         .tab-btn.active { background: white; color: var(--testo); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         
         .tab-panel { display: none; width: 100%; max-width: 400px; flex-direction: column; gap: 12px; position: relative; z-index: 2; }
         .tab-panel.active { display: flex; }
         
-        input, select, textarea { width: 100%; padding: 14px; border: 2px solid var(--bordo); border-radius: 12px; font-size: 15px; outline: none; transition: border 0.2s; }
+        input, select, textarea { width: 100%; padding: 14px; border: 2px solid var(--bordo); border-radius: 12px; font-size: var(--font-size-base); outline: none; transition: border 0.2s; background: white; color: var(--testo); }
         input:focus, select:focus, textarea:focus { border-color: var(--primario); }
         
-        button.btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: background 0.2s; }
+        button.btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: calc(var(--font-size-base) + 1px); font-weight: bold; cursor: pointer; color: white; transition: background 0.2s; }
         .btn-green { background: var(--primario); }
         .btn-green:hover { background: var(--primario-hover); }
         .btn-blue { background: var(--secondario); }
         .btn-blue:hover { background: var(--secondario-hover); }
         .btn-outline { background: transparent; border: 2px solid var(--primario); color: var(--primario); }
         .btn-outline:hover { background: var(--sfondo-chiaro); }
-        .error-lbl { color: #dc3545; font-size: 14px; margin-top: 10px; min-height: 20px; }
+        .error-lbl { color: #dc3545; font-size: var(--font-size-base); margin-top: 10px; min-height: 20px; }
 
         /* FLOATING BACKGROUND EMOJIS */
         .emoji-deco { position: absolute; font-size: 35px; opacity: 0.15; z-index: 1; user-select: none; }
@@ -64,16 +72,16 @@
         .progress-bar { width: 0%; height: 100%; background: var(--accento); transition: width 0.3s; }
         
         .chat-box { flex-grow: 1; padding: 20px; overflow-y: auto; background: var(--sfondo-chiaro); display: flex; flex-direction: column; gap: 12px; max-height: 480px; }
-        .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 16px; line-height: 1.4; word-wrap: break-word; }
+        .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: calc(var(--font-size-base) + 2px); line-height: 1.4; word-wrap: break-word; }
         .chat-bubble.tutor { background: var(--msg-tutor); align-self: flex-start; border-top-left-radius: 4px; }
         .chat-bubble.studente { background: var(--msg-studente); align-self: flex-end; border-top-right-radius: 4px; }
-        .chat-bubble.sistema { background: var(--msg-sistema); align-self: center; text-align: center; font-size: 14px; color: var(--secondario-hover); border-radius: 20px; padding: 6px 16px; }
+        .chat-bubble.sistema { background: var(--msg-sistema); align-self: center; text-align: center; font-size: var(--font-size-base); color: var(--secondario-hover); border-radius: 20px; padding: 6px 16px; }
         .chat-img { max-width: 100%; max-height: 250px; border-radius: 8px; margin-top: 8px; display: block; }
         
         .input-area { padding: 15px; display: flex; gap: 10px; background: white; border-top: 1px solid var(--bordo); }
         .input-area input { flex-grow: 1; }
         .input-area button { width: auto; padding: 0 25px; }
-        .btn-home-back { background: #eee; color: var(--testo); padding: 10px; border: none; cursor: pointer; font-weight: bold; width: 100%; text-align: center; border-top: 1px solid var(--bordo); }
+        .btn-home-back { background: #eee; color: var(--testo); padding: 10px; border: none; cursor: pointer; font-weight: bold; width: 100%; text-align: center; border-top: 1px solid var(--bordo); font-size: var(--font-size-base); }
 
         /* TEACHER DASHBOARD */
         .teacher-view { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
@@ -81,30 +89,35 @@
         .student-row { background: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--bordo); cursor: pointer; transition: transform 0.1s; }
         .student-row:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .student-info { display: flex; flex-direction: column; gap: 4px; }
-        .student-name { font-weight: bold; font-size: 16px; }
-        .student-meta { font-size: 13px; color: var(--testo-light); }
+        .student-name { font-weight: bold; font-size: calc(var(--font-size-base) + 2px); }
+        .student-meta { font-size: calc(var(--font-size-base) - 1px); color: var(--testo-light); }
         
         /* LOG VIEW & TEXTBOX */
-        .report-box { background: #fff; border: 1px solid var(--bordo); border-radius: 12px; padding: 15px; font-family: monospace; font-size: 13px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
+        .report-box { background: #fff; border: 1px solid var(--bordo); border-radius: 12px; padding: 15px; font-family: monospace; font-size: var(--font-size-base); max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
 
         /* EDITOR VIEW */
         .editor-layout { display: flex; gap: 15px; height: 480px; }
         .editor-sidebar { width: 30%; border-right: 1px solid var(--bordo); overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 10px; }
         .editor-form { width: 70%; overflow-y: auto; padding-left: 10px; display: flex; flex-direction: column; gap: 12px; }
-        .q-item-btn { width: 100%; padding: 10px; text-align: left; background: #eee; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .q-item-btn { width: 100%; padding: 10px; text-align: left; background: #eee; border: none; border-radius: 6px; font-size: calc(var(--font-size-base) - 1px); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .q-item-btn.active { background: var(--secondario); color: white; }
-        .image-preview-area { width: 100%; height: 120px; border: 2px dashed var(--bordo); border-radius: 8px; display: flex; justify-content: center; align-items: center; overflow: hidden; font-size: 12px; color: var(--testo-light); }
+        .image-preview-area { width: 100%; height: 120px; border: 2px dashed var(--bordo); border-radius: 8px; display: flex; justify-content: center; align-items: center; overflow: hidden; font-size: calc(var(--font-size-base) - 2px); color: var(--testo-light); }
         .image-preview-area img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        /* SETTINGS VIEW PANEL */
+        .settings-view { padding: 30px 20px; display: flex; flex-direction: column; gap: 20px; max-width: 500px; margin: 0 auto; width: 100%; }
+        .setting-item { display: flex; flex-direction: column; gap: 8px; }
+        .setting-label { font-weight: bold; font-size: calc(var(--font-size-base) + 1px); }
+        .preview-box { padding: 15px; background: var(--sfondo-chiaro); border-radius: 8px; border: 1px solid var(--bordo); min-height: 70px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- ========================================== -->
-    <!-- CONTAINER DI LOGIN / REGISTRAZIONE -->
-    <!-- ========================================== -->
     <div class="container active" id="view-login">
+        <div class="login-header-bar">
+            <button class="btn-settings-black" onclick="apriImpostazioni('view-login')">⚙️</button>
+        </div>
         <div class="login-wrap">
-            <!-- Deco Emojis -->
             <div class="emoji-deco" style="top:10%; left:10%;">📚</div>
             <div class="emoji-deco" style="top:15%; right:10%;">✏️</div>
             <div class="emoji-deco" style="bottom:15%; left:8%;">🎒</div>
@@ -118,7 +131,6 @@
                 <button class="tab-btn" onclick="switchLoginTab('docenti')">👨‍🏫 Area Docenti</button>
             </div>
 
-            <!-- TAB ALUNNI -->
             <div class="tab-panel active" id="panel-alunni">
                 <div style="color: var(--primario); font-weight: bold; margin-bottom: 10px;">Ciao! Pronto a imparare? 🚀</div>
                 <input type="text" id="stud-user" placeholder="Username">
@@ -135,7 +147,6 @@
                 <button class="btn-main btn-outline" onclick="registraAlunno()">Nuovo? Registrati ✨</button>
             </div>
 
-            <!-- TAB DOCENTI -->
             <div class="tab-panel" id="panel-docenti">
                 <div style="color: var(--secondario); font-weight: bold; margin-bottom: 10px;">Area Riservata Docenti 👨‍🏫</div>
                 <input type="text" id="prof-user" placeholder="Username docente">
@@ -149,21 +160,20 @@
     </div>
 
 
-    <!-- ========================================== -->
-    <!-- CONTAINER CHAT ALUNNO -->
-    <!-- ========================================== -->
     <div class="container" id="view-chat">
         <div class="header">
             <div class="header-title">🎓 Tutor Matematica</div>
-            <div class="header-hud" id="chat-hud-quesito"></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div class="header-hud" id="chat-hud-quesito"></div>
+                <button class="btn-settings-icon" onclick="apriImpostazioni('view-chat')">⚙️</button>
+            </div>
         </div>
         <div class="progress-bar-container">
             <div class="progress-bar" id="chat-progressbar"></div>
         </div>
         
         <div class="chat-box" id="chat-box-content">
-            <!-- Messages load here dynamically -->
-        </div>
+            </div>
 
         <div class="input-area">
             <input type="text" id="chat-input" placeholder="Scrivi qui la tua risposta..." onkeypress="handleChatEnter(event)">
@@ -173,29 +183,25 @@
     </div>
 
 
-    <!-- ========================================== -->
-    <!-- CONTAINER CRUSCOTTO DOCENTE -->
-    <!-- ========================================== -->
     <div class="container" id="view-docente">
         <div class="teacher-view">
             <div class="teacher-header">
                 <h2>👨‍🏫 Cruscotto Docente</h2>
-                <button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="tornaHome()">🏠 Esci</button>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-main btn-blue" style="width:auto; padding:8px 16px; background:gray;" onclick="apriImpostazioni('view-docente')">⚙️ Impostazioni</button>
+                    <button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="tornaHome()">🏠 Esci</button>
+                </div>
             </div>
 
             <button class="btn-main btn-green" style="background:#FF6B35;" onclick="apriEditorContenuti()">📝 Gestisci Quesiti e Obiettivi</button>
 
             <h3>📚 Elenco Alunni</h3>
             <div id="teacher-studenti-list" style="display:flex; flex-direction:column; gap:8px;">
-                <!-- Students items load here -->
-            </div>
+                </div>
         </div>
     </div>
 
 
-    <!-- ========================================== -->
-    <!-- CONTAINER REPORT STORICO ALUNNO -->
-    <!-- ========================================== -->
     <div class="container" id="view-report-alunno">
         <div class="teacher-view">
             <div class="teacher-header">
@@ -203,15 +209,11 @@
                 <button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="switchView('view-docente')">⬅ Indietro</button>
             </div>
             <div id="report-sessioni-list" style="display:flex; flex-direction:column; gap:8px;">
-                <!-- Session dates loaded here -->
-            </div>
+                </div>
         </div>
     </div>
 
 
-    <!-- ========================================== -->
-    <!-- CONTAINER DETTAGLIO GIORNO LOG -->
-    <!-- ========================================== -->
     <div class="container" id="view-log-giorno">
         <div class="teacher-view">
             <div class="teacher-header">
@@ -223,9 +225,6 @@
     </div>
 
 
-    <!-- ========================================== -->
-    <!-- CONTAINER EDITOR CONTENUTI -->
-    <!-- ========================================== -->
     <div class="container" id="view-editor">
         <div class="teacher-view" style="gap:12px;">
             <div class="teacher-header">
@@ -238,7 +237,6 @@
                 <button class="tab-btn" id="tab-editor-o" onclick="switchEditorTab('o')">🎯 Obiettivi</button>
             </div>
 
-            <!-- EDITOR QUESITI PANEL -->
             <div id="panel-editor-quesiti" style="display:flex; flex-direction:column; gap:10px;">
                 <div style="display:flex; gap:10px; background:#eee; padding:10px; border-radius:8px; align-items:center;">
                     <label>Classe:</label>
@@ -253,9 +251,7 @@
                 </div>
 
                 <div class="editor-layout">
-                    <!-- Left List -->
                     <div class="editor-sidebar" id="edit-lista-quesiti-container"></div>
-                    <!-- Right Form -->
                     <div class="editor-form">
                         <label style="font-weight:bold; font-size:13px;">Testo Problema:</label>
                         <textarea id="edit-q-testo" rows="3"></textarea>
@@ -288,7 +284,6 @@
                 </div>
             </div>
 
-            <!-- EDITOR OBIETTIVI PANEL -->
             <div id="panel-editor-obiettivi" style="display:none; flex-direction:column; gap:10px;">
                 <textarea id="edit-obiettivi-text" style="height:420px; font-family:monospace; font-size:13px;"></textarea>
             </div>
@@ -297,9 +292,47 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT APP STATE DRIVER -->
-    <!-- ========================================== -->
+
+    <div class="container" id="view-impostazioni">
+        <div class="settings-view">
+            <h2 style="color: var(--primario); text-align: center; margin-bottom: 10px;">⚙️ Impostazioni Interfaccia</h2>
+            <p style="color: var(--testo-light); text-align: center; font-size: 13px; margin-bottom: 15px;">Modifica il font e la dimensione del testo</p>
+            
+            <div class="setting-item">
+                <label class="setting-label">Font Family:</label>
+                <select id="setting-font-family" onchange="aggiornaAnteprimaSettings()">
+                    <option value="'Helvetica', Arial, sans-serif">Helvetica</option>
+                    <option value="'Arial', sans-serif">Arial</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                    <option value="'Courier New', monospace">Courier New</option>
+                    <option value="'Georgia', serif">Georgia</option>
+                    <option value="'Verdana', sans-serif">Verdana</option>
+                </select>
+            </div>
+
+            <div class="setting-item">
+                <div style="display:flex; justify-content:space-between;">
+                    <label class="setting-label">Dimensione Font:</label>
+                    <span id="setting-font-size-val" style="font-weight:bold; color:var(--primario);">14px</span>
+                </div>
+                <input type="range" id="setting-font-size" min="11" max="22" value="14" oninput="aggiornaAnteprimaSettings()">
+            </div>
+
+            <div class="setting-item">
+                <label class="setting-label">Anteprima:</label>
+                <div class="preview-box" id="settings-preview-box">
+                    Il mio testo di esempio 123<br>Prova anche con più righe!
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+                <button class="btn-main btn-green" style="padding:15px;" onclick="salvaEApplicaImpostazioni()">💾 Salva e Applica</button>
+                <button class="btn-main" style="background:gray; padding:12px;" onclick="chiudiImpostazioni()">❌ Annulla</button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         let utenteCorrente = "";
         let ruoloCorrente = "";
@@ -309,6 +342,61 @@
         let obiettiviGlobal = "";
         let quesitoIndexCorrente = null;
         let immagineBase64Corrente = null;
+        let vistaPrecedenteSettings = "view-login";
+
+        // Initialize UI preferences from LocalStorage
+        function caricaUIPreferences() {
+            const preferenzaFont = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif";
+            const preferenzaSize = localStorage.getItem('tutor_font_size') || "14";
+            
+            document.documentElement.style.setProperty('--font-family', preferenzaFont);
+            document.documentElement.style.setProperty('--font-size-base', preferenzaSize + 'px');
+            
+            document.getElementById('setting-font-family').value = preferenzaFont;
+            document.getElementById('setting-font-size').value = preferenzaSize;
+            document.getElementById('setting-font-size-val').textContent = preferenzaSize + 'px';
+        }
+
+        function apriImpostazioni(provenienzaId) {
+            vistaPrecedenteSettings = provenienzaId;
+            
+            const fontAttuale = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif";
+            const sizeAttuale = localStorage.getItem('tutor_font_size') || "14";
+            document.getElementById('setting-font-family').value = fontAttuale;
+            document.getElementById('setting-font-size').value = sizeAttuale;
+            
+            aggiornaAnteprimaSettings();
+            switchView('view-impostazioni');
+        }
+
+        function aggiornaAnteprimaSettings() {
+            const fontSel = document.getElementById('setting-font-family').value;
+            const sizeSel = document.getElementById('setting-font-size').value;
+            
+            document.getElementById('setting-font-size-val').textContent = sizeSel + 'px';
+            
+            const pBox = document.getElementById('settings-preview-box');
+            pBox.style.fontFamily = fontSel;
+            pBox.style.fontSize = sizeSel + 'px';
+        }
+
+        function salvaEApplicaImpostazioni() {
+            const fontSel = document.getElementById('setting-font-family').value;
+            const sizeSel = document.getElementById('setting-font-size').value;
+            
+            localStorage.setItem('tutor_font_family', fontSel);
+            localStorage.setItem('tutor_font_size', sizeSel);
+            
+            document.documentElement.style.setProperty('--font-family', fontSel);
+            document.documentElement.style.setProperty('--font-size-base', sizeSel + 'px');
+            
+            alert("✅ Impostazioni applicate e salvate in locale correttamente!");
+            switchView(vistaPrecedenteSettings);
+        }
+
+        function chiudiImpostazioni() {
+            switchView(vistaPrecedenteSettings);
+        }
 
         function switchView(viewId) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
@@ -409,7 +497,6 @@
             document.getElementById('chat-hud-quesito').textContent = "";
             document.getElementById('chat-progressbar').style.width = "0%";
             switchView('view-chat');
-            // Trigger flow initialization
             await inviaMessaggioFlusso("");
         }
 
@@ -422,7 +509,7 @@
             const msg = inp.value.trim();
             if(!msg) return;
             inp.value = "";
-            appendBubble("studente", msg);
+            await appendBubble("studente", msg);
             await inviaMessaggioFlusso(msg);
         }
 
@@ -435,7 +522,6 @@
             const data = await res.json();
             chatState = data.state;
             
-            // Render HUD
             const hud = document.getElementById('chat-hud-quesito');
             const progress = document.getElementById('chat-progressbar');
             if(chatState.fase === 'allenamento' || chatState.fase === 'attesa_spiegazione' || chatState.fase === 'attesa_ok_prossimo') {
@@ -448,34 +534,61 @@
                 progress.style.width = "0%";
             }
 
-            // Append messages with a slight sequence feel
             for(let i=0; i<data.messages.length; i++) {
                 const m = data.messages[i];
-                appendBubble(m.tipo, m.testo, m.immagine);
+                await appendBubble(m.tipo, m.testo, m.immagine);
             }
         }
 
-        function appendBubble(tipo, testo, imgBase64=null) {
-            const box = document.getElementById('chat-box-content');
-            const bubble = document.createElement('div');
-            bubble.className = `chat-bubble ${tipo}`;
-            
-            let prefix = "";
-            if(tipo === 'tutor') prefix = "🎓 ";
-            if(tipo === 'sistema') prefix = "💡 ";
-            if(tipo === 'studente') prefix = "✏️ ";
+        // --- ASYNC TYPEWRITER SCROLL EFFECT ---
+        async function appendBubble(tipo, testo, imgBase64=null) {
+            return new Promise((resolve) => {
+                const box = document.getElementById('chat-box-content');
+                const bubble = document.createElement('div');
+                bubble.className = `chat-bubble ${tipo}`;
+                
+                let prefix = "";
+                if(tipo === 'tutor') prefix = "🎓 ";
+                if(tipo === 'sistema') prefix = "💡 ";
+                if(tipo === 'studente') prefix = "✏️ ";
 
-            bubble.textContent = prefix + testo;
-            
-            if(imgBase64) {
-                const img = document.createElement('img');
-                img.className = "chat-img";
-                img.src = imgBase64;
-                bubble.appendChild(img);
-            }
+                box.appendChild(bubble);
 
-            box.appendChild(bubble);
-            box.scrollTop = box.scrollHeight;
+                if (tipo === 'tutor') {
+                    bubble.textContent = prefix;
+                    let i = 0;
+                    
+                    function typeWriter() {
+                        if (i < testo.length) {
+                            bubble.textContent += testo.charAt(i);
+                            i++;
+                            box.scrollTop = box.scrollHeight;
+                            setTimeout(typeWriter, 20); 
+                        } else {
+                            if(imgBase64) {
+                                const img = document.createElement('img');
+                                img.className = "chat-img";
+                                img.src = imgBase64;
+                                bubble.appendChild(img);
+                                box.scrollTop = box.scrollHeight;
+                            }
+                            resolve();
+                        }
+                    }
+                    typeWriter();
+                    
+                } else {
+                    bubble.textContent = prefix + testo;
+                    if(imgBase64) {
+                        const img = document.createElement('img');
+                        img.className = "chat-img";
+                        img.src = imgBase64;
+                        bubble.appendChild(img);
+                    }
+                    box.scrollTop = box.scrollHeight;
+                    resolve();
+                }
+            });
         }
 
         // --- TEACHER DASHBOARD LOGIC ---
@@ -554,7 +667,7 @@
             let logsGg = tuttiILogs.filter(l => l.data === dataScelta);
             let quesiti = logsGg.filter(l => l.tipo === 'QUESITO');
             
-            let summaryText = "  RIEPILOGO GIORNALIERO\n";
+            let summaryText = "  RIEPILOGO GIORNALIERO\\n";
             if(quesiti.length > 0) {
                 let corretti = quesiti.filter(q => q.esito === 'CORRETTO').length;
                 let tasso = Math.round((corretti / quesiti.length) * 100);
@@ -563,34 +676,34 @@
                 let punteggiSpiega = quesiti.filter(q => q.punteggio_spiegazione !== undefined).map(q => q.punteggio_spiegazione);
                 let mediaSpiega = punteggiSpiega.length > 0 ? Math.round(punteggiSpiega.reduce((a,b)=>a+b, 0) / punteggiSpiega.length) : 0;
                 
-                summaryText += `  Quesiti Affrontati: ${quesiti.length}  |  Corretti: ${corretti}/${quesiti.length}  |  Tasso Successo: ${tasso}%\n`;
-                summaryText += `  Tempo medio risposta: ${mediaT}s  |  Media Punteggio Spiegazioni: ${mediaSpiega}/100\n`;
+                summaryText += `  Quesiti Affrontati: ${quesiti.length}  |  Corretti: ${corretti}/${quesiti.length}  |  Tasso Successo: ${tasso}%\\n`;
+                summaryText += `  Tempo medio risposta: ${mediaT}s  |  Media Punteggio Spiegazioni: ${mediaSpiega}/100\\n`;
             }
-            summaryText += "=".repeat(65) + "\n\n";
+            summaryText += "=".repeat(65) + "\\n\\n";
 
             let detailedText = "";
             logsGg.forEach(entry => {
                 let tipo = entry.type || entry.tipo;
                 let ora = entry.ora || "";
                 if(tipo === 'ASSESSMENT') {
-                    detailedText += `🕒 [${ora}]  ── PRE-ASSESSMENT DIAGNOSTICO ──\n`;
-                    detailedText += `  Classe Alunno: ${entry.classe}\n  Domanda posta: ${entry.domanda}\n`;
-                    detailedText += `  Livello Assegnato Finale: ${entry.livello_assegnato || entry.livello_assigned}\n  Esito: ${entry.esito}  |  Tempo: ${entry.tempo_secondi}s\n`;
+                    detailedText += `🕒 [${ora}]  ── PRE-ASSESSMENT DIAGNOSTICO ──\\n`;
+                    detailedText += `  Classe Alunno: ${entry.classe}\\n  Domanda posta: ${entry.domanda}\\n`;
+                    detailedText += `  Livello Assegnato Finale: ${entry.livello_assegnato || entry.livello_assigned}\\n  Esito: ${entry.esito}  |  Tempo: ${entry.tempo_secondi}s\\n`;
                     if(entry.punteggio_spiegazione !== undefined) {
-                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\n`;
+                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\\n`;
                     }
-                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Tentativo ${i+1}: ${t}\n`; });
+                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Tentativo ${i+1}: ${t}\\n`; });
                 } else if(tipo === 'QUESITO') {
                     let ico = entry.esito === 'CORRETTO' ? '✅' : '❌';
-                    detailedText += `🕒 [${ora}]  ── QUESITO NUMERO ${entry.numero_quesito || '?'} ${ico}\n`;
-                    detailedText += `  Difficoltà: ${entry.livello}  |  Classe: ${entry.classe}\n  Domanda posta: ${entry.domanda}\n  Tempo impiegato: ${entry.tempo_secondi}s\n`;
+                    detailedText += `🕒 [${ora}]  ── QUESITO NUMERO ${entry.numero_quesito || '?'} ${ico}\\n`;
+                    detailedText += `  Difficoltà: ${entry.livello}  |  Classe: ${entry.classe}\\n  Domanda posta: ${entry.domanda}\\n  Tempo impiegato: ${entry.tempo_secondi}s\\n`;
                     if(entry.punteggio_spiegazione !== undefined) {
-                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\n`;
+                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\\n`;
                     }
-                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Risposta data al tentativo ${i+1}: ${t}\n`; });
-                    if(entry.ragionamento) detailedText += `  💬 Argomentazione dell'alunno: "${entry.ragionamento}"\n`;
+                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Risposta data al tentativo ${i+1}: ${t}\\n`; });
+                    if(entry.ragionamento) detailedText += `  💬 Argomentazione dell'alunno: "${entry.ragionamento}"\\n`;
                 }
-                detailedText += "-".repeat(50) + "\n\n";
+                detailedText += "-".repeat(50) + "\\n\\n";
             });
 
             document.getElementById('log-giorno-box').textContent = summaryText + detailedText;
@@ -673,7 +786,6 @@
 
             quesitoIndexCorrente = index;
             
-            // Highlight list item
             document.querySelectorAll('.q-item-btn').forEach((b, i) => {
                 if(i === index) b.classList.add('active');
                 else b.classList.remove('active');
@@ -745,7 +857,7 @@
             let urlVal = document.getElementById('edit-q-imgurl').value.trim();
             if(urlVal.startsWith('http')) {
                 q.immagine_url = urlVal;
-                q.immagine = urlVal; // or use standard text url mapping
+                q.immagine = urlVal;
             } else if(immagineBase64Corrente) {
                 q.immagine = immagineBase64Corrente;
             } else {
@@ -783,6 +895,9 @@
                 alert("Errore durante il salvataggio sul server.");
             }
         }
+
+        // Run UI font setup on load
+        window.addEventListener('DOMContentLoaded', caricaUIPreferences);
     </script>
 </body>
 </html>
