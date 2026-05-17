@@ -63,8 +63,11 @@
         .btn-green:hover:not(:disabled) { background: var(--primario-hover); }
         .btn-blue { background: var(--secondario); }
         .btn-blue:hover:not(:disabled) { background: var(--secondario-hover); }
-        .btn-outline { background: transparent; border: 2px solid var(--primario); color: var(--primario); }
+        
+        /* FIX: Bottone outline visibile forzando il colore verde */
+        .btn-outline { background: transparent; border: 2px solid var(--primario); color: var(--primario) !important; }
         .btn-outline:hover:not(:disabled) { background: var(--sfondo-chiaro); }
+        
         .error-lbl { color: #dc3545; font-size: var(--font-size-base); margin-top: 10px; min-height: 20px; }
 
         /* FLOATING BACKGROUND EMOJIS */
@@ -353,7 +356,6 @@
         let immagineBase64Corrente = null;
         let vistaPrecedenteSettings = "view-login";
         
-        // VARIABILE PER LA VELOCITÀ DEL TESTO
         let typingSpeedMs = 20;
 
         function caricaUIPreferences() {
@@ -489,7 +491,7 @@
             document.getElementById('chat-hud-quesito').textContent = "";
             document.getElementById('chat-progressbar').style.width = "0%";
             switchView('view-chat');
-            await inviaMessaggioFlusso(""); // Questo disabilita e riabilita da solo
+            await inviaMessaggioFlusso("");
         }
 
         function handleChatEnter(e) { if(e.key === 'Enter') inviaMessaggioChat(); }
@@ -501,7 +503,6 @@
             
             if(!msg || inp.disabled) return;
             
-            // BLOCCO IMMEDIATO DELLA CHAT
             inp.disabled = true;
             btn.disabled = true;
             inp.value = "";
@@ -514,7 +515,6 @@
             const inp = document.getElementById('chat-input');
             const btn = document.getElementById('btn-invia-chat');
             
-            // Assicuriamoci che resti disabilitato durante l'attesa del server
             inp.disabled = true;
             btn.disabled = true;
 
@@ -541,7 +541,6 @@
                 await appendBubble(m.tipo, m.testo, m.immagine);
             }
             
-            // SBLOCCO INPUT SOLO QUANDO IL BOT HA FINITO DI SCRIVERE
             inp.disabled = false;
             btn.disabled = false;
             inp.focus();
@@ -561,7 +560,6 @@
                 box.appendChild(bubble);
 
                 if (tipo === 'tutor' && typingSpeedMs > 0) {
-                    // Applica l'effetto macchina da scrivere solo se la velocità è maggiore di 0
                     bubble.textContent = prefix;
                     let i = 0;
                     
@@ -582,7 +580,6 @@
                     }
                     typeWriter();
                 } else {
-                    // Messaggio stampato all'istante
                     bubble.textContent = prefix + testo;
                     if(imgBase64) {
                         const img = document.createElement('img');
