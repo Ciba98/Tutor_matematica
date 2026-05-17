@@ -55,13 +55,16 @@
         input, select, textarea { width: 100%; padding: 14px; border: 2px solid var(--bordo); border-radius: 12px; font-size: var(--font-size-base); outline: none; transition: border 0.2s; background: white; color: var(--testo); }
         input:focus, select:focus, textarea:focus { border-color: var(--primario); }
         
+        /* EFFETTO INPUT DISABILITATO DURANTE LA SCRITTURA DEL BOT */
+        input:disabled, button:disabled { opacity: 0.6; cursor: not-allowed; }
+
         button.btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: calc(var(--font-size-base) + 1px); font-weight: bold; cursor: pointer; color: white; transition: background 0.2s; }
         .btn-green { background: var(--primario); }
-        .btn-green:hover { background: var(--primario-hover); }
+        .btn-green:hover:not(:disabled) { background: var(--primario-hover); }
         .btn-blue { background: var(--secondario); }
-        .btn-blue:hover { background: var(--secondario-hover); }
+        .btn-blue:hover:not(:disabled) { background: var(--secondario-hover); }
         .btn-outline { background: transparent; border: 2px solid var(--primario); color: var(--primario); }
-        .btn-outline:hover { background: var(--sfondo-chiaro); }
+        .btn-outline:hover:not(:disabled) { background: var(--sfondo-chiaro); }
         .error-lbl { color: #dc3545; font-size: var(--font-size-base); margin-top: 10px; min-height: 20px; }
 
         /* FLOATING BACKGROUND EMOJIS */
@@ -172,12 +175,11 @@
             <div class="progress-bar" id="chat-progressbar"></div>
         </div>
         
-        <div class="chat-box" id="chat-box-content">
-            </div>
+        <div class="chat-box" id="chat-box-content"></div>
 
         <div class="input-area">
             <input type="text" id="chat-input" placeholder="Scrivi qui la tua risposta..." onkeypress="handleChatEnter(event)">
-            <button class="btn-main btn-green" onclick="inviaMessaggioChat()">Invia 💬</button>
+            <button class="btn-main btn-green" id="btn-invia-chat" onclick="inviaMessaggioChat()">Invia 💬</button>
         </div>
         <button class="btn-home-back" onclick="tornaHome()">← Torna alla Home</button>
     </div>
@@ -196,8 +198,7 @@
             <button class="btn-main btn-green" style="background:#FF6B35;" onclick="apriEditorContenuti()">📝 Gestisci Quesiti e Obiettivi</button>
 
             <h3>📚 Elenco Alunni</h3>
-            <div id="teacher-studenti-list" style="display:flex; flex-direction:column; gap:8px;">
-                </div>
+            <div id="teacher-studenti-list" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
     </div>
 
@@ -208,8 +209,7 @@
                 <h2 id="report-student-title">📅 Sessioni Alunno</h2>
                 <button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="switchView('view-docente')">⬅ Indietro</button>
             </div>
-            <div id="report-sessioni-list" style="display:flex; flex-direction:column; gap:8px;">
-                </div>
+            <div id="report-sessioni-list" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
     </div>
 
@@ -332,7 +332,6 @@
         </div>
     </div>
 
-
     <script>
         let utenteCorrente = "";
         let ruoloCorrente = "";
@@ -358,12 +357,10 @@
 
         function apriImpostazioni(provenienzaId) {
             vistaPrecedenteSettings = provenienzaId;
-            
             const fontAttuale = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif";
             const sizeAttuale = localStorage.getItem('tutor_font_size') || "14";
             document.getElementById('setting-font-family').value = fontAttuale;
             document.getElementById('setting-font-size').value = sizeAttuale;
-            
             aggiornaAnteprimaSettings();
             switchView('view-impostazioni');
         }
@@ -371,9 +368,7 @@
         function aggiornaAnteprimaSettings() {
             const fontSel = document.getElementById('setting-font-family').value;
             const sizeSel = document.getElementById('setting-font-size').value;
-            
             document.getElementById('setting-font-size-val').textContent = sizeSel + 'px';
-            
             const pBox = document.getElementById('settings-preview-box');
             pBox.style.fontFamily = fontSel;
             pBox.style.fontSize = sizeSel + 'px';
@@ -382,20 +377,15 @@
         function salvaEApplicaImpostazioni() {
             const fontSel = document.getElementById('setting-font-family').value;
             const sizeSel = document.getElementById('setting-font-size').value;
-            
             localStorage.setItem('tutor_font_family', fontSel);
             localStorage.setItem('tutor_font_size', sizeSel);
-            
             document.documentElement.style.setProperty('--font-family', fontSel);
             document.documentElement.style.setProperty('--font-size-base', sizeSel + 'px');
-            
             alert("✅ Impostazioni applicate e salvate in locale correttamente!");
             switchView(vistaPrecedenteSettings);
         }
 
-        function chiudiImpostazioni() {
-            switchView(vistaPrecedenteSettings);
-        }
+        function chiudiImpostazioni() { switchView(vistaPrecedenteSettings); }
 
         function switchView(viewId) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
@@ -415,9 +405,7 @@
         }
 
         function tornaHome() {
-            utenteCorrente = "";
-            ruoloCorrente = "";
-            chatState = {};
+            utenteCorrente = ""; ruoloCorrente = ""; chatState = {};
             document.getElementById('stud-user').value = "";
             document.getElementById('stud-pass').value = "";
             document.getElementById('prof-user').value = "";
@@ -430,18 +418,13 @@
             const u = document.getElementById('stud-user').value.trim();
             const p = document.getElementById('stud-pass').value.trim();
             if(!u || !p) { showLoginError("Compila tutti i campi!"); return; }
-            
             const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({username: u, password: p})
             });
             const data = await res.json();
-            if(data.status === 'success' && data.ruolo === 'studente') {
-                avviaSessioneAlunno(u, data.classe);
-            } else {
-                showLoginError(data.message || "Credenziali errate o account non alunno.");
-            }
+            if(data.status === 'success' && data.ruolo === 'studente') { avviaSessioneAlunno(u, data.classe); } 
+            else { showLoginError(data.message || "Credenziali errate o account non alunno."); }
         }
 
         async function registraAlunno() {
@@ -449,71 +432,68 @@
             const p = document.getElementById('stud-pass').value.trim();
             const cl = document.getElementById('stud-classe').value;
             if(!u || !p || !cl) { showLoginError("Specificare username, password e classe per registrarsi!"); return; }
-
             const res = await fetch('/api/register', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({username: u, password: p, classe: cl})
             });
             const data = await res.json();
-            if(data.status === 'success') {
-                avviaSessioneAlunno(u, cl);
-            } else {
-                showLoginError(data.message);
-            }
+            if(data.status === 'success') { avviaSessioneAlunno(u, cl); } 
+            else { showLoginError(data.message); }
         }
 
         async function loginDocente() {
             const u = document.getElementById('prof-user').value.trim();
             const p = document.getElementById('prof-pass').value.trim();
             const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({username: u, password: p})
             });
             const data = await res.json();
             if(data.status === 'success' && data.ruolo === 'docente') {
-                utenteCorrente = u;
-                ruoloCorrente = 'docente';
-                avviaDashboardDocente();
-            } else {
-                showLoginError(data.message || "Credenziali errate docente.");
-            }
+                utenteCorrente = u; ruoloCorrente = 'docente'; avviaDashboardDocente();
+            } else { showLoginError(data.message || "Credenziali errate docente."); }
         }
 
-        function showLoginError(msg) {
-            document.getElementById('login-error').textContent = msg;
-        }
+        function showLoginError(msg) { document.getElementById('login-error').textContent = msg; }
 
         async function avviaSessioneAlunno(username, classe) {
-            utenteCorrente = username;
-            ruoloCorrente = 'studente';
-            classeCorrente = classe;
-            chatState = {};
+            utenteCorrente = username; ruoloCorrente = 'studente'; classeCorrente = classe; chatState = {};
             document.getElementById('chat-box-content').innerHTML = "";
             document.getElementById('chat-hud-quesito').textContent = "";
             document.getElementById('chat-progressbar').style.width = "0%";
             switchView('view-chat');
-            await inviaMessaggioFlusso("");
+            await inviaMessaggioFlusso(""); // Questo disabilita e riabilita da solo
         }
 
-        function handleChatEnter(e) {
-            if(e.key === 'Enter') inviaMessaggioChat();
-        }
+        function handleChatEnter(e) { if(e.key === 'Enter') inviaMessaggioChat(); }
 
         async function inviaMessaggioChat() {
             const inp = document.getElementById('chat-input');
+            const btn = document.getElementById('btn-invia-chat');
             const msg = inp.value.trim();
-            if(!msg) return;
+            
+            // Se l'input è vuoto o è già bloccato dal bot, non fare nulla (previene lo spam!)
+            if(!msg || inp.disabled) return;
+            
+            // 🛑 BLOCCO IMMEDIATO: disabilita tutto per prevenire lo "speed run"
+            inp.disabled = true;
+            btn.disabled = true;
             inp.value = "";
+            
             await appendBubble("studente", msg);
             await inviaMessaggioFlusso(msg);
         }
 
         async function inviaMessaggioFlusso(userMsg) {
+            const inp = document.getElementById('chat-input');
+            const btn = document.getElementById('btn-invia-chat');
+            
+            // Assicuriamoci che resti disabilitato durante l'attesa del server
+            inp.disabled = true;
+            btn.disabled = true;
+
             const res = await fetch('/api/chat_flow', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({username: utenteCorrente, message: userMsg, state: chatState})
             });
             const data = await res.json();
@@ -527,14 +507,18 @@
                 hud.textContent = `Quesito ${num}/10`;
                 progress.style.width = `${(num / 10) * 100}%`;
             } else {
-                hud.textContent = "";
-                progress.style.width = "0%";
+                hud.textContent = ""; progress.style.width = "0%";
             }
 
             for(let i=0; i<data.messages.length; i++) {
                 const m = data.messages[i];
                 await appendBubble(m.tipo, m.testo, m.immagine);
             }
+            
+            // 🟢 SBLOCCO INPUT SOLO QUANDO IL BOT HA FINITO DI SCRIVERE TUTTO
+            inp.disabled = false;
+            btn.disabled = false;
+            inp.focus();
         }
 
         async function appendBubble(tipo, testo, imgBase64=null) {
@@ -563,22 +547,18 @@
                         } else {
                             if(imgBase64) {
                                 const img = document.createElement('img');
-                                img.className = "chat-img";
-                                img.src = imgBase64;
-                                bubble.appendChild(img);
-                                box.scrollTop = box.scrollHeight;
+                                img.className = "chat-img"; img.src = imgBase64;
+                                bubble.appendChild(img); box.scrollTop = box.scrollHeight;
                             }
                             resolve();
                         }
                     }
                     typeWriter();
-                    
                 } else {
                     bubble.textContent = prefix + testo;
                     if(imgBase64) {
                         const img = document.createElement('img');
-                        img.className = "chat-img";
-                        img.src = imgBase64;
+                        img.className = "chat-img"; img.src = imgBase64;
                         bubble.appendChild(img);
                     }
                     box.scrollTop = box.scrollHeight;
@@ -598,7 +578,6 @@
                 listContainer.innerHTML = `<div style="text-align:center;color:gray;padding:20px;">Nessun alunno registrato.</div>`;
                 return;
             }
-
             data.studenti.forEach(s => {
                 const row = document.createElement('div');
                 row.className = "student-row";
@@ -617,16 +596,13 @@
         async function apriStoricoDateAlunno(username) {
             switchView('view-report-alunno');
             document.getElementById('report-student-title').textContent = `📅 Sessioni di ${username.toUpperCase()}`;
-            
             const res = await fetch('/api/teacher/student_logs', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({username: username})
             });
             const data = await res.json();
             const container = document.getElementById('report-sessioni-list');
             container.innerHTML = "";
-
             let dateSet = new Set();
             let logs = data.log_sessione || [];
             logs.forEach(l => { if(l.data) dateSet.add(l.data); });
@@ -635,7 +611,6 @@
                 container.innerHTML = `<div style="text-align:center;color:gray;padding:20px;">Nessuna sessione registrata.</div>`;
                 return;
             }
-
             dateSet.forEach(d => {
                 let qGg = logs.filter(l => l.data === d && l.tipo === 'QUESITO');
                 let corretti = qGg.filter(l => l.esito === 'CORRETTO').length;
@@ -656,7 +631,6 @@
         function apriDettaglioGiornoLog(username, dataScelta, tuttiILogs) {
             switchView('view-log-giorno');
             document.getElementById('log-giorno-title').textContent = `📊 ${username.toUpperCase()} – Registro del ${dataScelta}`;
-            
             document.getElementById('btn-back-to-sessions').onclick = () => apriStoricoDateAlunno(username);
 
             let logsGg = tuttiILogs.filter(l => l.data === dataScelta);
@@ -700,7 +674,6 @@
                 }
                 detailedText += "-".repeat(50) + "\n\n";
             });
-
             document.getElementById('log-giorno-box').textContent = summaryText + detailedText;
         }
 
@@ -711,7 +684,6 @@
             const data = await res.json();
             poolProblemiGlobal = data.pool_problemi;
             obiettiviGlobal = data.obiettivi;
-            
             document.getElementById('edit-obiettivi-text').value = obiettiviGlobal;
             renderEditorListaQuesiti();
         }
@@ -736,7 +708,6 @@
             const lv = document.getElementById('edit-filter-livello').value;
             const container = document.getElementById('edit-lista-quesiti-container');
             container.innerHTML = "";
-
             const classeKey = `classe_${cl}`;
             const quesiti = (poolProblemiGlobal[classeKey] && poolProblemiGlobal[classeKey][lv]) ? poolProblemiGlobal[classeKey][lv] : [];
 
@@ -745,7 +716,6 @@
                 resetEditorForm();
                 return;
             }
-
             quesiti.forEach((q, i) => {
                 const btn = document.createElement('button');
                 btn.className = `q-item-btn ${quesitoIndexCorrente === i ? 'active' : ''}`;
@@ -753,20 +723,14 @@
                 btn.onclick = () => caricaQuesitoInForm(i);
                 container.appendChild(btn);
             });
-            
-            if(quesitoIndexCorrente === null || quesitoIndexCorrente >= quesiti.length) {
-                caricaQuesitoInForm(0);
-            }
+            if(quesitoIndexCorrente === null || quesitoIndexCorrente >= quesiti.length) { caricaQuesitoInForm(0); }
         }
 
         function resetEditorForm() {
             quesitoIndexCorrente = null;
-            document.getElementById('edit-q-testo').value = "";
-            document.getElementById('edit-q-imgurl').value = "";
-            document.getElementById('edit-q-risposta').value = "";
-            document.getElementById('edit-q-indizio1').value = "";
-            document.getElementById('edit-q-indizio2').value = "";
-            document.getElementById('edit-q-soluzione').value = "";
+            document.getElementById('edit-q-testo').value = ""; document.getElementById('edit-q-imgurl').value = "";
+            document.getElementById('edit-q-risposta').value = ""; document.getElementById('edit-q-indizio1').value = "";
+            document.getElementById('edit-q-indizio2').value = ""; document.getElementById('edit-q-soluzione').value = "";
             document.getElementById('edit-q-imgpreview').innerHTML = "Nessuna immagine";
             immagineBase64Corrente = null;
         }
@@ -779,26 +743,18 @@
             if(!q) return;
 
             quesitoIndexCorrente = index;
-            
             document.querySelectorAll('.q-item-btn').forEach((b, i) => {
-                if(i === index) b.classList.add('active');
-                else b.classList.remove('active');
+                if(i === index) b.classList.add('active'); else b.classList.remove('active');
             });
-
-            document.getElementById('edit-q-testo').value = q.testo || "";
-            document.getElementById('edit-q-imgurl').value = q.immagine_url || q.immagine || "";
-            document.getElementById('edit-q-risposta').value = q.risposta || "";
-            document.getElementById('edit-q-indizio1').value = q.indizio_1 || "";
-            document.getElementById('edit-q-indizio2').value = q.indizio_2 || "";
-            document.getElementById('edit-q-soluzione').value = q.soluzione || "";
+            document.getElementById('edit-q-testo').value = q.testo || ""; document.getElementById('edit-q-imgurl').value = q.immagine_url || q.immagine || "";
+            document.getElementById('edit-q-risposta').value = q.risposta || ""; document.getElementById('edit-q-indizio1').value = q.indizio_1 || "";
+            document.getElementById('edit-q-indizio2').value = q.indizio_2 || ""; document.getElementById('edit-q-soluzione').value = q.soluzione || "";
 
             const preview = document.getElementById('edit-q-imgpreview');
             if(q.immagine) {
-                immagineBase64Corrente = q.immagine;
-                preview.innerHTML = `<img src="${q.immagine}">`;
+                immagineBase64Corrente = q.immagine; preview.innerHTML = `<img src="${q.immagine}">`;
             } else {
-                immagineBase64Corrente = null;
-                preview.innerHTML = "Nessuna immagine presente";
+                immagineBase64Corrente = null; preview.innerHTML = "Nessuna immagine presente";
             }
         }
 
@@ -818,17 +774,10 @@
             const cl = document.getElementById('edit-filter-classe').value;
             const lv = document.getElementById('edit-filter-livello').value;
             const classeKey = `classe_${cl}`;
-            
             if(!poolProblemiGlobal[classeKey]) poolProblemiGlobal[classeKey] = {};
             if(!poolProblemiGlobal[classeKey][lv]) poolProblemiGlobal[classeKey][lv] = [];
 
-            const nuovo = {
-                testo: "Nuovo problema da compilare",
-                risposta: "",
-                indizio_1: "",
-                indizio_2: "",
-                soluzione: ""
-            };
+            const nuovo = { testo: "Nuovo problema da compilare", risposta: "", indizio_1: "", indizio_2: "", soluzione: "" };
             poolProblemiGlobal[classeKey][lv].push(nuovo);
             quesitoIndexCorrente = poolProblemiGlobal[classeKey][lv].length - 1;
             renderEditorListaQuesiti();
@@ -840,24 +789,15 @@
             const cl = document.getElementById('edit-filter-classe').value;
             const lv = document.getElementById('edit-filter-livello').value;
             const classeKey = `classe_${cl}`;
-
             const q = poolProblemiGlobal[classeKey][lv][quesitoIndexCorrente];
-            q.testo = document.getElementById('edit-q-testo').value.trim();
-            q.risposta = document.getElementById('edit-q-risposta').value.trim();
-            q.indizio_1 = document.getElementById('edit-q-indizio1').value.trim();
-            q.indizio_2 = document.getElementById('edit-q-indizio2').value.trim();
+            q.testo = document.getElementById('edit-q-testo').value.trim(); q.risposta = document.getElementById('edit-q-risposta').value.trim();
+            q.indizio_1 = document.getElementById('edit-q-indizio1').value.trim(); q.indizio_2 = document.getElementById('edit-q-indizio2').value.trim();
             q.soluzione = document.getElementById('edit-q-soluzione').value.trim();
             
             let urlVal = document.getElementById('edit-q-imgurl').value.trim();
-            if(urlVal.startsWith('http')) {
-                q.immagine_url = urlVal;
-                q.immagine = urlVal;
-            } else if(immagineBase64Corrente) {
-                q.immagine = immagineBase64Corrente;
-            } else {
-                delete q.immagine;
-                delete q.immagine_url;
-            }
+            if(urlVal.startsWith('http')) { q.immagine_url = urlVal; q.immagine = urlVal; } 
+            else if(immagineBase64Corrente) { q.immagine = immagineBase64Corrente; } 
+            else { delete q.immagine; delete q.immagine_url; }
 
             alert("Quesito aggiornato in memoria! Ricordati di premere 'SALVA TUTTO SUL SERVER' per applicare stabilmente.");
             renderEditorListaQuesiti();
@@ -869,7 +809,6 @@
             const cl = document.getElementById('edit-filter-classe').value;
             const lv = document.getElementById('edit-filter-livello').value;
             const classeKey = `classe_${cl}`;
-
             poolProblemiGlobal[classeKey][lv].splice(quesitoIndexCorrente, 1);
             quesitoIndexCorrente = null;
             renderEditorListaQuesiti();
@@ -878,16 +817,12 @@
         async function salvaTuttiIContenutiSulServer() {
             const obiettiviVal = document.getElementById('edit-obiettivi-text').value;
             const res = await fetch('/api/teacher/save_content', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({pool_problemi: poolProblemiGlobal, obiettivi: obiettiviVal})
             });
             const data = await res.json();
-            if(data.status === 'success') {
-                alert("🎉 Contenuti archiviati e messi online con successo nel file JSON del server!");
-            } else {
-                alert("Errore durante il salvataggio sul server.");
-            }
+            if(data.status === 'success') { alert("🎉 Contenuti archiviati e messi online con successo nel file JSON del server!"); } 
+            else { alert("Errore durante il salvataggio sul server."); }
         }
 
         window.addEventListener('DOMContentLoaded', caricaUIPreferences);
