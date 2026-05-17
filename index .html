@@ -3,54 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎓 Tutor Matematica V2</title>
+    <title>🎓 Tutor Matematica V2 - Sistema Completo</title>
     <style>
-        /* COLORI IDENTICI ALL'ORIGINALE */
+        /* COLORI ORIGINALI */
         :root {
             --primario: #4CAF50;
             --primario-hover: #45A049;
             --secondario: #2196F3;
             --accento: #FFA726;
+            --header-bg: linear-gradient(135deg, #4CAF50 0%, #45A049 100%);
             --sfondo: #FFFFFF;
             --sfondo-chiaro: #F5F5F5;
             --bordo: #E0E0E0;
             --testo: #212121;
             --msg-tutor: #E8F5E9;
             --msg-sistema: #E3F2FD;
-            --msg-studente: #FFF3E0;
+            --msg-tu: #FFF3E0;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            background-color: var(--sfondo-chiaro);
+            background: var(--sfondo-chiaro);
             color: var(--testo);
         }
 
-        .header-custom {
-            background: linear-gradient(135deg, var(--primario) 0%, var(--primario-hover) 100%);
+        .header {
+            background: var(--header-bg);
             padding: 24px;
             text-align: center;
             color: white;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .header-custom h1 {
-            margin: 0;
-            font-size: 32px;
-            font-weight: 700;
-        }
-
-        .header-custom p {
-            margin: 8px 0 0 0;
-            font-size: 16px;
-            opacity: 0.95;
-        }
+        .header h1 { font-size: 32px; font-weight: 700; margin: 0; }
+        .header p { font-size: 16px; opacity: 0.95; margin-top: 8px; }
 
         .container {
             max-width: 600px;
@@ -80,34 +68,14 @@
             transition: all 0.3s;
         }
 
-        .tab-btn:hover {
-            background: var(--bordo);
-        }
+        .tab-btn:hover { background: var(--bordo); }
+        .tab-btn.active { background: var(--primario); color: white; }
 
-        .tab-btn.active {
-            background: var(--primario);
-            color: white;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-content h3 { text-align: center; color: var(--primario); margin-bottom: 20px; }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .tab-content h3 {
-            text-align: center;
-            color: var(--primario);
-            margin-bottom: 20px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        form { display: flex; flex-direction: column; gap: 15px; }
 
         input, select {
             padding: 14px;
@@ -133,50 +101,15 @@
             transition: all 0.3s;
         }
 
-        .btn-primary {
-            background: var(--primario);
-            color: white;
-        }
+        .btn-primary { background: var(--primario); color: white; }
+        .btn-primary:hover { background: var(--primario-hover); }
+        .btn-secondary { background: var(--sfondo-chiaro); color: var(--testo); }
+        .btn-secondary:hover { background: var(--bordo); }
+        .btn-exit { background: #f44336; color: white; }
+        .btn-back { background: var(--secondario); color: white; }
 
-        .btn-primary:hover {
-            background: var(--primario-hover);
-        }
-
-        .btn-secondary {
-            background: var(--sfondo-chiaro);
-            color: var(--testo);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bordo);
-        }
-
-        .btn-exit {
-            background: #f44336;
-            color: white;
-        }
-
-        .message {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .error {
-            color: #d32f2f;
-            background: #ffebee;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .success {
-            color: #388e3c;
-            background: #e8f5e9;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
+        .error { color: #d32f2f; background: #ffebee; padding: 10px; border-radius: 6px; margin-top: 10px; }
+        .success { color: #388e3c; background: #e8f5e9; padding: 10px; border-radius: 6px; margin-top: 10px; }
         .info-box {
             margin-top: 20px;
             padding: 15px;
@@ -186,6 +119,7 @@
             font-size: 14px;
         }
 
+        /* CHAT STUDENTE */
         .chat-container {
             max-width: 1200px;
             margin: 20px auto;
@@ -203,31 +137,10 @@
             padding: 20px;
         }
 
-        .msg-tutor, .msg-studente, .msg-sistema {
-            padding: 12px 16px;
-            margin: 8px 0;
-            border-radius: 8px;
-            font-size: 15px;
-            line-height: 1.5;
-        }
-
-        .msg-tutor {
-            background: var(--msg-tutor);
-            border-left: 4px solid var(--primario);
-        }
-
-        .msg-studente {
-            background: var(--msg-studente);
-            border-left: 4px solid var(--accento);
-            text-align: right;
-        }
-
-        .msg-sistema {
-            background: var(--msg-sistema);
-            border-left: 4px solid var(--secondario);
-            text-align: center;
-            font-weight: 600;
-        }
+        .msg { padding: 12px 16px; margin: 8px 0; border-radius: 8px; font-size: 15px; line-height: 1.5; }
+        .msg-tutor { background: var(--msg-tutor); border-left: 4px solid var(--primario); }
+        .msg-tu { background: var(--msg-tu); border-left: 4px solid var(--accento); text-align: right; }
+        .msg-sistema { background: var(--msg-sistema); border-left: 4px solid var(--secondario); text-align: center; font-weight: 600; }
 
         .chat-input-container {
             display: flex;
@@ -236,13 +149,9 @@
             border-top: 2px solid var(--bordo);
         }
 
-        #message-input {
-            flex: 1;
-        }
+        #message-input { flex: 1; }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         .progress-container {
             max-width: 1200px;
@@ -254,11 +163,12 @@
             text-align: center;
             font-weight: 600;
             margin-bottom: 8px;
+            font-size: 18px;
         }
 
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 10px;
             background: var(--sfondo-chiaro);
             border-radius: 10px;
             overflow: hidden;
@@ -277,28 +187,15 @@
             padding: 20px;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 30px;
         }
 
-        .stat-card {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .stat-card h3 {
-            font-size: 14px;
-            color: #757575;
-            margin-bottom: 8px;
-        }
-
-        .stat-card .value {
-            font-size: 32px;
+        .dashboard-title {
+            font-size: 28px;
             font-weight: 700;
             color: var(--primario);
         }
@@ -310,11 +207,19 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
+        .student-list h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
         .student-item {
             padding: 16px;
             border-bottom: 1px solid var(--bordo);
             cursor: pointer;
             transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .student-item:hover {
@@ -323,6 +228,16 @@
 
         .student-item:last-child {
             border-bottom: none;
+        }
+
+        .student-info {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .student-stats {
+            font-size: 14px;
+            color: #757575;
         }
 
         .detail-box {
@@ -340,25 +255,36 @@
             border-radius: 6px;
             border-left: 4px solid var(--primario);
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.8;
+            font-family: 'Courier New', monospace;
         }
 
         .log-entry.error {
             border-left-color: #f44336;
         }
 
-        .log-entry .da-rivedere {
+        .da-rivedere {
             color: #f44336;
-            font-weight: 600;
+            font-weight: 700;
+        }
+
+        .riepilogo {
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
         }
     </style>
 </head>
 <body>
     <!-- LOGIN PAGE -->
     <div id="login-page">
-        <div class="header-custom">
+        <div class="header">
             <h1>🎓 Tutor Matematica V2</h1>
-            <p>Sistema Adattivo di Apprendimento ✨</p>
+            <p>Sistema Adattivo con Validazione Intelligente ✨</p>
         </div>
 
         <div class="container">
@@ -381,7 +307,7 @@
                     </select>
                     <button type="submit" class="btn-primary">✅ Accedi</button>
                     <button type="button" class="btn-secondary" onclick="handleRegister()">📝 Registrati</button>
-                    <div id="msg-alunni" class="message"></div>
+                    <div id="msg-alunni"></div>
                 </form>
             </div>
 
@@ -391,7 +317,7 @@
                     <input type="text" id="user-docenti" placeholder="Username (docente)" required>
                     <input type="password" id="pass-docenti" placeholder="Password (admin123)" required>
                     <button type="submit" class="btn-primary">✅ Accedi</button>
-                    <div id="msg-docenti" class="message"></div>
+                    <div id="msg-docenti"></div>
                 </form>
                 <div class="info-box">
                     💡 <strong>Credenziali default:</strong> Username: <code>docente</code> | Password: <code>admin123</code>
@@ -402,7 +328,7 @@
 
     <!-- CHAT PAGE STUDENTE -->
     <div id="chat-page" class="hidden">
-        <div class="header-custom">
+        <div class="header">
             <h1>🎓 Tutor Matematica</h1>
             <p>Benvenuto/a <strong id="user-name"></strong> - Classe <span id="user-classe"></span></p>
         </div>
@@ -427,33 +353,27 @@
 
     <!-- DASHBOARD DOCENTE -->
     <div id="dashboard-page" class="hidden">
-        <div class="header-custom">
-            <h1>👨‍🏫 Dashboard Docente</h1>
-            <p>Monitoraggio Progressi Studenti</p>
+        <div class="header">
+            <h1>👨‍🏫 Cruscotto Docente</h1>
+            <p>Monitoraggio e Statistiche Studenti</p>
         </div>
 
         <div class="dashboard">
-            <div style="text-align: right; margin-bottom: 20px;">
+            <div class="dashboard-header">
+                <div class="dashboard-title" id="dashboard-title">📚 Elenco Alunni</div>
                 <button onclick="logout()" class="btn-exit">🚪 Logout</button>
             </div>
 
-            <div class="stats-grid" id="stats-grid">
-                <!-- Stats cards will be inserted here -->
-            </div>
-
-            <div class="student-list" id="student-list">
-                <h2 style="margin-bottom: 20px;">📋 Lista Studenti</h2>
-                <div id="students-container"></div>
-            </div>
-
-            <div id="student-detail" class="hidden">
-                <!-- Student detail will be inserted here -->
+            <div class="student-list" id="main-view">
+                <div id="students-container">
+                    <div class="info-box">Caricamento...</div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURAZIONE API
+        // CONFIGURAZIONE
         const API_URL = 'https://tutor-matematica-k7at.onrender.com/api';
 
         // STATE
@@ -471,8 +391,7 @@
             assess_esito: '',
             tentativi_correnti: 0,
             risposte_correnti: [],
-            quesito_t_start: 0,
-            problemi_usati: {facile: [], medio: [], difficile: []}
+            quesito_t_start: 0
         };
 
         // UTILITY
@@ -502,11 +421,11 @@
             container.innerHTML = '';
             sessionState.messaggi.forEach(msg => {
                 const div = document.createElement('div');
-                div.className = `msg-${msg.tipo}`;
+                div.className = `msg msg-${msg.tipo}`;
                 
                 let icon = '';
                 if (msg.tipo === 'tutor') icon = '🎓 <strong>Tutor:</strong> ';
-                else if (msg.tipo === 'studente') icon = '<strong>Tu:</strong> ';
+                else if (msg.tipo === 'tu') icon = '<strong>Tu:</strong> ';
                 else if (msg.tipo === 'sistema') icon = 'ℹ️ ';
                 
                 div.innerHTML = icon + msg.testo;
@@ -539,13 +458,13 @@
                 currentUser = res.user;
                 if (ruolo === 'docente') {
                     showDashboardPage();
-                    loadDashboardData();
+                    loadDashboard();
                 } else {
                     showChatPage();
                     initSession();
                 }
             } else {
-                msgEl.innerHTML = '<span class="error">❌ Credenziali errate o ruolo non valido</span>';
+                msgEl.innerHTML = '<div class="error">❌ Credenziali errate o ruolo non valido</div>';
             }
             return false;
         }
@@ -557,16 +476,16 @@
             const msgEl = document.getElementById('msg-alunni');
             
             if (!username || !password) {
-                msgEl.innerHTML = '<span class="error">❌ Compila tutti i campi!</span>';
+                msgEl.innerHTML = '<div class="error">❌ Compila tutti i campi!</div>';
                 return;
             }
             
             const res = await apiCall('/register', {username, password, classe});
             
             if (res.success) {
-                msgEl.innerHTML = '<span class="success">✅ Registrazione completata! Ora puoi fare login.</span>';
+                msgEl.innerHTML = '<div class="success">✅ Registrazione completata! Ora puoi fare login.</div>';
             } else {
-                msgEl.innerHTML = '<span class="error">❌ ' + res.error + '</span>';
+                msgEl.innerHTML = '<div class="error">❌ ' + res.error + '</div>';
             }
         }
 
@@ -598,30 +517,12 @@
         }
 
         // DASHBOARD DOCENTE
-        async function loadDashboardData() {
-            // Per ora mostra messaggio
-            const statsGrid = document.getElementById('stats-grid');
-            const studentsContainer = document.getElementById('students-container');
-            
-            statsGrid.innerHTML = `
-                <div class="stat-card">
-                    <h3>👥 Studenti Totali</h3>
-                    <div class="value">-</div>
-                </div>
-                <div class="stat-card">
-                    <h3>📝 Quesiti Totali</h3>
-                    <div class="value">-</div>
-                </div>
-                <div class="stat-card">
-                    <h3>📊 Media Classe</h3>
-                    <div class="value">-%</div>
-                </div>
-            `;
-            
-            studentsContainer.innerHTML = '<div class="info-box">Dashboard in costruzione. Statistiche dettagliate disponibili a breve.</div>';
+        async function loadDashboard() {
+            const container = document.getElementById('students-container');
+            container.innerHTML = '<div class="info-box">📊 Dashboard docente con statistiche dettagliate sarà disponibile a breve.<br><br>Per ora puoi vedere che il sistema funziona:<br>✅ Login docente OK<br>✅ API connesse<br>✅ Database attivo<br><br>Le funzionalità complete includeranno: lista studenti, sessioni, report dettagliati, punteggi spiegazioni, e flag "da rivedere".</div>';
         }
 
-        // CHAT FLOW STUDENTE
+        // CHAT STUDENTE
         async function initSession() {
             addMessage('sistema', `👋 Benvenuto/a ${currentUser.username}!`);
             addMessage('tutor', 'Ciao! Sono il tuo tutor di matematica. Inizieremo con un problema di valutazione per capire il tuo livello.');
@@ -635,7 +536,7 @@
             if (!message) return;
             
             input.value = '';
-            addMessage('studente', message);
+            addMessage('tu', message);
             
             await processMessage(message);
         }
@@ -868,7 +769,7 @@
             sessionState.quesito_numero++;
         }
 
-        // Event listener per Enter
+        // Event listener
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('message-input').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendMessage();
