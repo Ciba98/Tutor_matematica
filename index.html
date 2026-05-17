@@ -296,7 +296,7 @@
     <div class="container" id="view-impostazioni">
         <div class="settings-view">
             <h2 style="color: var(--primario); text-align: center; margin-bottom: 10px;">⚙️ Impostazioni Interfaccia</h2>
-            <p style="color: var(--testo-light); text-align: center; font-size: 13px; margin-bottom: 15px;">Modifica il font e la dimensione del testo</p>
+            <p style="color: var(--testo-light); text-align: center; font-size: 13px; margin-bottom: 15px;">Modifica il font, le dimensioni e la velocità</p>
             
             <div class="setting-item">
                 <label class="setting-label">Font Family:</label>
@@ -316,6 +316,16 @@
                     <span id="setting-font-size-val" style="font-weight:bold; color:var(--primario);">14px</span>
                 </div>
                 <input type="range" id="setting-font-size" min="11" max="22" value="14" oninput="aggiornaAnteprimaSettings()">
+            </div>
+
+            <div class="setting-item">
+                <label class="setting-label">Velocità di Scrittura (Tutor):</label>
+                <select id="setting-speed" onchange="aggiornaAnteprimaSettings()">
+                    <option value="10">Veloce</option>
+                    <option value="20">Normale</option>
+                    <option value="40">Lenta</option>
+                    <option value="0">Istantanea (Nessuno scorrimento)</option>
+                </select>
             </div>
 
             <div class="setting-item">
@@ -342,10 +352,14 @@
         let quesitoIndexCorrente = null;
         let immagineBase64Corrente = null;
         let vistaPrecedenteSettings = "view-login";
+        
+        // VARIABILE PER LA VELOCITÀ DEL TESTO
+        let typingSpeedMs = 20;
 
         function caricaUIPreferences() {
             const preferenzaFont = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif";
             const preferenzaSize = localStorage.getItem('tutor_font_size') || "14";
+            const preferenzaSpeed = localStorage.getItem('tutor_typing_speed') || "20";
             
             document.documentElement.style.setProperty('--font-family', preferenzaFont);
             document.documentElement.style.setProperty('--font-size-base', preferenzaSize + 'px');
@@ -353,14 +367,21 @@
             document.getElementById('setting-font-family').value = preferenzaFont;
             document.getElementById('setting-font-size').value = preferenzaSize;
             document.getElementById('setting-font-size-val').textContent = preferenzaSize + 'px';
+            document.getElementById('setting-speed').value = preferenzaSpeed;
+            
+            typingSpeedMs = parseInt(preferenzaSpeed, 10);
         }
 
         function apriImpostazioni(provenienzaId) {
             vistaPrecedenteSettings = provenienzaId;
             const fontAttuale = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif";
             const sizeAttuale = localStorage.getItem('tutor_font_size') || "14";
+            const speedAttuale = localStorage.getItem('tutor_typing_speed') || "20";
+            
             document.getElementById('setting-font-family').value = fontAttuale;
             document.getElementById('setting-font-size').value = sizeAttuale;
+            document.getElementById('setting-speed').value = speedAttuale;
+            
             aggiornaAnteprimaSettings();
             switchView('view-impostazioni');
         }
@@ -377,10 +398,16 @@
         function salvaEApplicaImpostazioni() {
             const fontSel = document.getElementById('setting-font-family').value;
             const sizeSel = document.getElementById('setting-font-size').value;
+            const speedSel = document.getElementById('setting-speed').value;
+            
             localStorage.setItem('tutor_font_family', fontSel);
             localStorage.setItem('tutor_font_size', sizeSel);
+            localStorage.setItem('tutor_typing_speed', speedSel);
+            
             document.documentElement.style.setProperty('--font-family', fontSel);
             document.documentElement.style.setProperty('--font-size-base', sizeSel + 'px');
+            typingSpeedMs = parseInt(speedSel, 10);
+            
             alert("✅ Impostazioni applicate e salvate in locale correttamente!");
             switchView(vistaPrecedenteSettings);
         }
@@ -472,10 +499,9 @@
             const btn = document.getElementById('btn-invia-chat');
             const msg = inp.value.trim();
             
-            // Se l'input è vuoto o è già bloccato dal bot, non fare nulla (previene lo spam!)
             if(!msg || inp.disabled) return;
             
-            // 🛑 BLOCCO IMMEDIATO: disabilita tutto per prevenire lo "speed run"
+            // BLOCCO IMMEDIATO DELLA CHAT
             inp.disabled = true;
             btn.disabled = true;
             inp.value = "";
@@ -515,7 +541,7 @@
                 await appendBubble(m.tipo, m.testo, m.immagine);
             }
             
-            // 🟢 SBLOCCO INPUT SOLO QUANDO IL BOT HA FINITO DI SCRIVERE TUTTO
+            // SBLOCCO INPUT SOLO QUANDO IL BOT HA FINITO DI SCRIVERE
             inp.disabled = false;
             btn.disabled = false;
             inp.focus();
@@ -534,7 +560,8 @@
 
                 box.appendChild(bubble);
 
-                if (tipo === 'tutor') {
+                if (tipo === 'tutor' && typingSpeedMs > 0) {
+                    // Applica l'effetto macchina da scrivere solo se la velocità è maggiore di 0
                     bubble.textContent = prefix;
                     let i = 0;
                     
@@ -543,7 +570,7 @@
                             bubble.textContent += testo.charAt(i);
                             i++;
                             box.scrollTop = box.scrollHeight;
-                            setTimeout(typeWriter, 20); 
+                            setTimeout(typeWriter, typingSpeedMs); 
                         } else {
                             if(imgBase64) {
                                 const img = document.createElement('img');
@@ -555,6 +582,7 @@
                     }
                     typeWriter();
                 } else {
+                    // Messaggio stampato all'istante
                     bubble.textContent = prefix + testo;
                     if(imgBase64) {
                         const img = document.createElement('img');
