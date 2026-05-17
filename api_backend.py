@@ -15,10 +15,6 @@ FILE_DB = "database_classe.json"
 FILE_PROBLEMI = "problemi_per_classe.json"
 FILE_OBIETTIVI = "OBIETTIVI_DIDATTICI_MATEMATICA.md"
 
-# =====================================================================
-# CORE FUNCTIONS FROM ORIGINAL CODE
-# =====================================================================
-
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
@@ -88,28 +84,29 @@ def salva_pool_problemi(pool: dict):
 
 def carica_obiettivi():
     if not os.path.exists(FILE_OBIETTIVI):
+        # FIX FORMATTAZIONE: Usiamo veri a-capo per non far stampare " \n "
         obiettivi_base = (
-            "# OBIETTIVI DIDATTICI MATEMATICA SCUOLA PRIMARIA\\n\\n"
-            "## CLASSE 1ª\\n"
-            "- Contare fino a 20\\n"
-            "- Addizioni e sottrazioni entro il 10\\n"
-            "- Riconoscere forme geometriche base\\n\\n"
-            "## CLASSE 2ª\\n"
-            "- Tabelline base (×2, ×5, ×10)\\n"
-            "- Addizioni e sottrazioni entro il 100\\n"
-            "- Prime divisioni semplici\\n\\n"
-            "## CLASSE 3ª\\n"
-            "- Padroneggiare tutte le tabelline\\n"
-            "- Frazioni semplici (1/2, 1/4, 1/3)\\n"
-            "- Perimetro di figure semplici\\n\\n"
-            "## CLASSE 4ª\\n"
-            "- Numeri decimali\\n"
-            "- Area di rettangoli e quadrati\\n"
-            "- Frazioni e percentuali base\\n\\n"
-            "## CLASSE 5ª\\n"
-            "- Frazioni complesse\\n"
-            "- Volume di solidi\\n"
-            "- Proporzioni e percentuali avanzate\\n"
+            "# OBIETTIVI DIDATTICI MATEMATICA SCUOLA PRIMARIA\n\n"
+            "## CLASSE 1ª\n"
+            "- Contare fino a 20\n"
+            "- Addizioni e sottrazioni entro il 10\n"
+            "- Riconoscere forme geometriche base\n\n"
+            "## CLASSE 2ª\n"
+            "- Tabelline base (×2, ×5, ×10)\n"
+            "- Addizioni e sottrazioni entro il 100\n"
+            "- Prime divisioni semplici\n\n"
+            "## CLASSE 3ª\n"
+            "- Padroneggiare tutte le tabelline\n"
+            "- Frazioni semplici (1/2, 1/4, 1/3)\n"
+            "- Perimetro di figure semplici\n\n"
+            "## CLASSE 4ª\n"
+            "- Numeri decimali\n"
+            "- Area di rettangoli e quadrati\n"
+            "- Frazioni e percentuali base\n\n"
+            "## CLASSE 5ª\n"
+            "- Frazioni complesse\n"
+            "- Volume di solidi\n"
+            "- Proporzioni e percentuali avanzate\n"
         )
         with open(FILE_OBIETTIVI, "w", encoding="utf-8") as f:
             f.write(obiettivi_base)
@@ -139,12 +136,8 @@ def conta_quesiti_log(log_sessione):
             count += 1
     return count
 
-# =====================================================================
-# INTELLIGENT MATHEMATICAL VALIDATION LOGIC
-# =====================================================================
-
 def estrai_numeri(testo: str) -> list:
-    pattern = r'\\d+[,.]?\\d*'
+    pattern = r'\d+[,.]?\d*'
     numeri_raw = re.findall(pattern, testo)
     numeri = []
     for n in numeri_raw:
@@ -174,7 +167,7 @@ def rileva_operazioni_multiple(testo: str) -> list:
     return operazioni
 
 def estrai_calcoli(testo: str) -> list:
-    pattern = r'(\\d+(?:[,.]\\d+)?)\\s*([+\\-×*÷/])\\s*(\\d+(?:[,.]\\d+)?)\\s*=\\s*(\\d+(?:[,.]\\d+)?)'
+    pattern = r'(\d+(?:[,.]\d+)?)\s*([+\-×*÷/])\s*(\d+(?:[,.]\d+)?)\s*=\s*(\d+(?:[,.]\d+)?)'
     matches = re.findall(pattern, testo)
     calcoli = []
     for match in matches:
@@ -318,10 +311,6 @@ def adatta_livello(livello_corrente: str, successo: bool, tentativi: int) -> str
     elif successo and tentativi == 2: nuovo_indice = indice_corrente
     else: nuovo_indice = max(indice_corrente - 1, 0)
     return livelli_ordine[nuovo_indice]
-
-# =====================================================================
-# BACKEND STATE ROUTING LOGIC
-# =====================================================================
 
 @app.route('/')
 def home_index():
