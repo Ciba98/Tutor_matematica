@@ -69,7 +69,7 @@ def crea_problemi_base():
             "assessment": [{"testo": "Un parallelepipedo ha base 4 cm, larghezza 3 cm e altezza 5 cm. Qual è il volume?", "risposta": "60", "indizio_1": "Volume = base × larghezza × altezza", "indizio_2": "Fai 4 × 3 × 5", "soluzione": "Volume = 4 × 3 × 5 = 60 cm³"}],
             "facile": [{"testo": "Converti 3/5 in decimale", "risposta": "0.6", "indizio_1": "Dividi il numeratore per il denominatore", "indizio_2": "Fai 3 ÷ 5", "soluzione": "3 ÷ 5 = 0,6"}],
             "medio": [{"testo": "Un'auto viaggia a 60 km/h per 2,5 ore. Quanti km percorre?", "risposta": "150", "indizio_1": "Distanza = velocità × tempo", "indizio_2": "Fai 60 × 2,5", "soluzione": "Distanza = 60 × 2,5 = 150 km"}],
-            "difficile": [{"testo": "Un cerchio ha raggio 7 cm. Qual è la considerazione della circonferenza? (usa π ≈ 3,14)", "risposta": "43.96", "indizio_1": "Circonferenza = 2 × π × raggio", "indizio_2": "Fai 2 × 3,14 × 7", "soluzione": "Circonferenza = 2 × 3,14 × 7 = 43,96 cm"}]
+            "difficile": [{"testo": "Un cerchio ha raggio 7 cm. Qual è la circonferenza? (usa π ≈ 3,14)", "risposta": "43.96", "indizio_1": "Circonferenza = 2 × π × raggio", "indizio_2": "Fai 2 × 3,14 × 7", "soluzione": "Circonferenza = 2 × 3,14 × 7 = 43,96 cm"}]
         }
     }
     with open(FILE_PROBLEMI, "w", encoding="utf-8") as f:
@@ -88,7 +88,29 @@ def salva_pool_problemi(pool: dict):
 
 def carica_obiettivi():
     if not os.path.exists(FILE_OBIETTIVI):
-        obiettivi_base = "# OBIETTIVI DIDATTICI MATEMATICA SCUOLA PRIMARIA\n\n## CLASSE 1ª\n- Contare fino a 20\n- Addizioni e sottrazioni entro il 10\n- Riconoscere forme geometriche base\n"
+        obiettivi_base = (
+            "# OBIETTIVI DIDATTICI MATEMATICA SCUOLA PRIMARIA\\n\\n"
+            "## CLASSE 1ª\\n"
+            "- Contare fino a 20\\n"
+            "- Addizioni e sottrazioni entro il 10\\n"
+            "- Riconoscere forme geometriche base\\n\\n"
+            "## CLASSE 2ª\\n"
+            "- Tabelline base (×2, ×5, ×10)\\n"
+            "- Addizioni e sottrazioni entro il 100\\n"
+            "- Prime divisioni semplici\\n\\n"
+            "## CLASSE 3ª\\n"
+            "- Padroneggiare tutte le tabelline\\n"
+            "- Frazioni semplici (1/2, 1/4, 1/3)\\n"
+            "- Perimetro di figure semplici\\n\\n"
+            "## CLASSE 4ª\\n"
+            "- Numeri decimali\\n"
+            "- Area di rettangoli e quadrati\\n"
+            "- Frazioni e percentuali base\\n\\n"
+            "## CLASSE 5ª\\n"
+            "- Frazioni complesse\\n"
+            "- Volume di solidi\\n"
+            "- Proporzioni e percentuali avanzate\\n"
+        )
         with open(FILE_OBIETTIVI, "w", encoding="utf-8") as f:
             f.write(obiettivi_base)
         return obiettivi_base
@@ -122,7 +144,7 @@ def conta_quesiti_log(log_sessione):
 # =====================================================================
 
 def estrai_numeri(testo: str) -> list:
-    pattern = r'\d+[,.]?\d*'
+    pattern = r'\\d+[,.]?\\d*'
     numeri_raw = re.findall(pattern, testo)
     numeri = []
     for n in numeri_raw:
@@ -152,7 +174,7 @@ def rileva_operazioni_multiple(testo: str) -> list:
     return operazioni
 
 def estrai_calcoli(testo: str) -> list:
-    pattern = r'(\d+(?:[,.]\d+)?)\s*([+\-×*÷/])\s*(\d+(?:[,.]\d+)?)\s*=\s*(\d+(?:[,.]\d+)?)'
+    pattern = r'(\\d+(?:[,.]\\d+)?)\\s*([+\\-×*÷/])\\s*(\\d+(?:[,.]\\d+)?)\\s*=\\s*(\\d+(?:[,.]\\d+)?)'
     matches = re.findall(pattern, testo)
     calcoli = []
     for match in matches:
@@ -397,7 +419,6 @@ def chat_flow():
     state = payload.get('state', {})
     
     if not state or not state.get('fase'):
-        # Initial Session Trigger
         state = {
             "fase": "dialogo_iniziale",
             "dialogo_step": 0,
@@ -486,7 +507,6 @@ def chat_flow():
                 state['fase'] = "attesa_ok"
                 tempo_assess = time.time() - state['assess_t_start']
                 
-                # Append log
                 entry = {
                     "data": datetime.now().strftime("%d/%m/%Y"), "ora": datetime.now().strftime("%H:%M"),
                     "tipo": "ASSESSMENT", "classe": state['classe_studente'], "domanda": prob['testo'],
@@ -535,7 +555,6 @@ def chat_flow():
             state['quesito_numero'] = 1
             state['allenamento_t_start'] = time.time()
             
-            # Pick next question
             prob = get_next_problema(pool, state)
             state['problema_corrente'] = prob
             state['tentativi_correnti'] = 0
@@ -578,7 +597,6 @@ def chat_flow():
                 }
                 if username in db:
                     db[username].setdefault("log_sessione", []).append(entry)
-                    # Adaptive max level tracker
                     if liv_num > db[username].get('livello_massimo', 0) and entry['esito'] == 'CORRETTO':
                         db[username]['livello_massimo'] = liv_num
                     salva_database(db)
@@ -660,10 +678,8 @@ def get_next_problema(pool, state):
     problemi_livello = pool.get(classe_key, {}).get(liv, [])
     
     if not problemi_livello:
-        # Fallback absolute minimum
         return {"testo": "Risolvi: 10 + 5", "risposta": "15", "indizio_1": "Somma", "indizio_2": "Fai 10+5", "soluzione": "10+5=15"}
         
-    # Filter out used ones inside this session state
     usati = state['problemi_usati'].get(liv, [])
     disponibili = [p for p in problemi_livello if p['testo'] not in usati]
     
@@ -676,10 +692,8 @@ def get_next_problema(pool, state):
     return scelto
 
 if __name__ == '__main__':
-    # Build database and files if missing at boot
     carica_database()
     carica_pool_problemi()
     carica_obiettivi()
-    # Handle port from Render binding environment
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
