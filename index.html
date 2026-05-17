@@ -344,7 +344,6 @@
         let immagineBase64Corrente = null;
         let vistaPrecedenteSettings = "view-login";
 
-        // Initialize UI preferences from LocalStorage
         function caricaUIPreferences() {
             const preferenzaFont = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif";
             const preferenzaSize = localStorage.getItem('tutor_font_size') || "14";
@@ -427,7 +426,6 @@
             switchView('view-login');
         }
 
-        // --- AUTH API ---
         async function loginAlunno() {
             const u = document.getElementById('stud-user').value.trim();
             const p = document.getElementById('stud-pass').value.trim();
@@ -487,7 +485,6 @@
             document.getElementById('login-error').textContent = msg;
         }
 
-        // --- CHAT SYSTEM LOGIC ---
         async function avviaSessioneAlunno(username, classe) {
             utenteCorrente = username;
             ruoloCorrente = 'studente';
@@ -540,7 +537,6 @@
             }
         }
 
-        // --- ASYNC TYPEWRITER SCROLL EFFECT ---
         async function appendBubble(tipo, testo, imgBase64=null) {
             return new Promise((resolve) => {
                 const box = document.getElementById('chat-box-content');
@@ -591,7 +587,6 @@
             });
         }
 
-        // --- TEACHER DASHBOARD LOGIC ---
         async function avviaDashboardDocente() {
             switchView('view-docente');
             const res = await fetch('/api/teacher/dashboard');
@@ -667,7 +662,7 @@
             let logsGg = tuttiILogs.filter(l => l.data === dataScelta);
             let quesiti = logsGg.filter(l => l.tipo === 'QUESITO');
             
-            let summaryText = "  RIEPILOGO GIORNALIERO\\n";
+            let summaryText = "  RIEPILOGO GIORNALIERO\n";
             if(quesiti.length > 0) {
                 let corretti = quesiti.filter(q => q.esito === 'CORRETTO').length;
                 let tasso = Math.round((corretti / quesiti.length) * 100);
@@ -676,40 +671,39 @@
                 let punteggiSpiega = quesiti.filter(q => q.punteggio_spiegazione !== undefined).map(q => q.punteggio_spiegazione);
                 let mediaSpiega = punteggiSpiega.length > 0 ? Math.round(punteggiSpiega.reduce((a,b)=>a+b, 0) / punteggiSpiega.length) : 0;
                 
-                summaryText += `  Quesiti Affrontati: ${quesiti.length}  |  Corretti: ${corretti}/${quesiti.length}  |  Tasso Successo: ${tasso}%\\n`;
-                summaryText += `  Tempo medio risposta: ${mediaT}s  |  Media Punteggio Spiegazioni: ${mediaSpiega}/100\\n`;
+                summaryText += `  Quesiti Affrontati: ${quesiti.length}  |  Corretti: ${corretti}/${quesiti.length}  |  Tasso Successo: ${tasso}%\n`;
+                summaryText += `  Tempo medio risposta: ${mediaT}s  |  Media Punteggio Spiegazioni: ${mediaSpiega}/100\n`;
             }
-            summaryText += "=".repeat(65) + "\\n\\n";
+            summaryText += "=".repeat(65) + "\n\n";
 
             let detailedText = "";
             logsGg.forEach(entry => {
                 let tipo = entry.type || entry.tipo;
                 let ora = entry.ora || "";
                 if(tipo === 'ASSESSMENT') {
-                    detailedText += `🕒 [${ora}]  ── PRE-ASSESSMENT DIAGNOSTICO ──\\n`;
-                    detailedText += `  Classe Alunno: ${entry.classe}\\n  Domanda posta: ${entry.domanda}\\n`;
-                    detailedText += `  Livello Assegnato Finale: ${entry.livello_assegnato || entry.livello_assigned}\\n  Esito: ${entry.esito}  |  Tempo: ${entry.tempo_secondi}s\\n`;
+                    detailedText += `🕒 [${ora}]  ── PRE-ASSESSMENT DIAGNOSTICO ──\n`;
+                    detailedText += `  Classe Alunno: ${entry.classe}\n  Domanda posta: ${entry.domanda}\n`;
+                    detailedText += `  Livello Assegnato Finale: ${entry.livello_assegnato || entry.livello_assigned}\n  Esito: ${entry.esito}  |  Tempo: ${entry.tempo_secondi}s\n`;
                     if(entry.punteggio_spiegazione !== undefined) {
-                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\\n`;
+                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\n`;
                     }
-                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Tentativo ${i+1}: ${t}\\n`; });
+                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Tentativo ${i+1}: ${t}\n`; });
                 } else if(tipo === 'QUESITO') {
                     let ico = entry.esito === 'CORRETTO' ? '✅' : '❌';
-                    detailedText += `🕒 [${ora}]  ── QUESITO NUMERO ${entry.numero_quesito || '?'} ${ico}\\n`;
-                    detailedText += `  Difficoltà: ${entry.livello}  |  Classe: ${entry.classe}\\n  Domanda posta: ${entry.domanda}\\n  Tempo impiegato: ${entry.tempo_secondi}s\\n`;
+                    detailedText += `🕒 [${ora}]  ── QUESITO NUMERO ${entry.numero_quesito || '?'} ${ico}\n`;
+                    detailedText += `  Difficoltà: ${entry.livello}  |  Classe: ${entry.classe}\n  Domanda posta: ${entry.domanda}\n  Tempo impiegato: ${entry.tempo_secondi}s\n`;
                     if(entry.punteggio_spiegazione !== undefined) {
-                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\\n`;
+                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\n`;
                     }
-                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Risposta data al tentativo ${i+1}: ${t}\\n`; });
-                    if(entry.ragionamento) detailedText += `  💬 Argomentazione dell'alunno: "${entry.ragionamento}"\\n`;
+                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Risposta data al tentativo ${i+1}: ${t}\n`; });
+                    if(entry.ragionamento) detailedText += `  💬 Argomentazione dell'alunno: "${entry.ragionamento}"\n`;
                 }
-                detailedText += "-".repeat(50) + "\\n\\n";
+                detailedText += "-".repeat(50) + "\n\n";
             });
 
             document.getElementById('log-giorno-box').textContent = summaryText + detailedText;
         }
 
-        // --- EDITOR CONTENTS SECTION ---
         async function apriEditorContenuti() {
             switchView('view-editor');
             switchEditorTab('q');
@@ -896,7 +890,6 @@
             }
         }
 
-        // Run UI font setup on load
         window.addEventListener('DOMContentLoaded', caricaUIPreferences);
     </script>
 </body>
