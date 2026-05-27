@@ -3,127 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor IA – Matematica V2 [Sistema Adattivo]</title>
+    <title>Tutor IA – Matematica V2 [Sistema Adattivo & RPG]</title>
     <style>
         :root {
-            --primario: #4CAF50;
-            --primario-hover: #45A049;
-            --secondario: #2196F3;
-            --secondario-hover: #1976D2;
-            --accento: #FFA726;
-            --sfondo: #FFFFFF;
-            --sfondo-chiaro: #F5F5F5;
-            --bordo: #E0E0E0;
-            --testo: #212121;
-            --testo-light: #757575;
-            --msg-tutor: #E8F5E9;
-            --msg-sistema: #E3F2FD;
-            --msg-studente: #FFF3E0;
-            
-            /* DYNAMIC FONTS DRIVEN BY SETTINGS */
-            --font-family: 'Helvetica', Arial, sans-serif;
-            --font-size-base: 14px;
+            --primario: #4CAF50; --primario-hover: #45A049; --secondario: #2196F3; --secondario-hover: #1976D2;
+            --accento: #FFA726; --sfondo: #FFFFFF; --sfondo-chiaro: #F5F5F5; --bordo: #E0E0E0;
+            --testo: #212121; --testo-light: #757575; --msg-tutor: #E8F5E9; --msg-sistema: #E3F2FD; --msg-studente: #FFF3E0;
+            --font-family: 'Helvetica', Arial, sans-serif; --font-size-base: 14px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
         body { background-color: var(--sfondo-chiaro); color: var(--testo); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; font-size: var(--font-size-base); }
-        
         .container { width: 100%; max-width: 800px; background: var(--sfondo); border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); overflow: hidden; display: none; min-height: 650px; flex-direction: column; }
         .container.active { display: flex; }
 
-        /* HEADER */
+        /* HEADER & LOGIN */
         .header { background: var(--primario); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
         .header-title { font-size: calc(var(--font-size-base) + 6px); display: flex; align-items: center; gap: 8px; }
         .header-hud { font-size: calc(var(--font-size-base) - 1px); background: rgba(0,0,0,0.15); padding: 5px 12px; border-radius: 20px; }
         .btn-settings-icon { background: transparent; border: none; color: white; font-size: 22px; cursor: pointer; padding: 0 5px; }
-
-        /* LOGIN PAGE */
         .login-wrap { padding: 40px 20px; text-align: center; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; }
         .login-header-bar { width: 100%; display: flex; justify-content: flex-end; padding-right: 15px; position: absolute; top: 15px; right: 0; }
         .btn-settings-black { background: transparent; border: none; color: var(--testo); font-size: 26px; cursor: pointer; }
-        
         .login-title { font-size: calc(var(--font-size-base) + 16px); font-weight: bold; margin-bottom: 5px; color: var(--testo); }
         .login-subtitle { font-size: calc(var(--font-size-base) + 1px); color: var(--testo-light); margin-bottom: 30px; }
         
+        /* DISEGNI BACKGROUND HOME RESTAURATI */
+        .emoji-deco { position: absolute; font-size: 35px; opacity: 0.15; z-index: 1; user-select: none; }
+
         .tabs { display: flex; width: 100%; max-width: 400px; margin-bottom: 20px; background: #eee; border-radius: 8px; padding: 4px; }
         .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: bold; cursor: pointer; border-radius: 6px; color: var(--testo-light); font-size: var(--font-size-base); }
         .tab-btn.active { background: white; color: var(--testo); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        
         .tab-panel { display: none; width: 100%; max-width: 400px; flex-direction: column; gap: 12px; position: relative; z-index: 2; }
         .tab-panel.active { display: flex; }
-        
         input, select, textarea { width: 100%; padding: 14px; border: 2px solid var(--bordo); border-radius: 12px; font-size: var(--font-size-base); outline: none; transition: border 0.2s; background: white; color: var(--testo); }
         input:focus, select:focus, textarea:focus { border-color: var(--primario); }
-        
-        /* EFFETTO INPUT DISABILITATO DURANTE LA SCRITTURA DEL BOT */
         input:disabled, button:disabled { opacity: 0.6; cursor: not-allowed; }
-
         button.btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: calc(var(--font-size-base) + 1px); font-weight: bold; cursor: pointer; color: white; transition: background 0.2s; }
-        .btn-green { background: var(--primario); }
-        .btn-green:hover:not(:disabled) { background: var(--primario-hover); }
-        .btn-blue { background: var(--secondario); }
-        .btn-blue:hover:not(:disabled) { background: var(--secondario-hover); }
-        
-        /* FIX: Bottone outline visibile forzando il colore verde */
-        .btn-outline { background: transparent; border: 2px solid var(--primario); color: var(--primario) !important; }
-        .btn-outline:hover:not(:disabled) { background: var(--sfondo-chiaro); }
-        
+        .btn-green { background: var(--primario); } .btn-green:hover:not(:disabled) { background: var(--primario-hover); }
+        .btn-blue { background: var(--secondario); } .btn-blue:hover:not(:disabled) { background: var(--secondario-hover); }
+        .btn-outline { background: transparent; border: 2px solid var(--primario); color: var(--primario) !important; } .btn-outline:hover:not(:disabled) { background: var(--sfondo-chiaro); }
         .error-lbl { color: #dc3545; font-size: var(--font-size-base); margin-top: 10px; min-height: 20px; }
 
-        /* FLOATING BACKGROUND EMOJIS */
-        .emoji-deco { position: absolute; font-size: 35px; opacity: 0.15; z-index: 1; user-select: none; }
-
-        /* CHAT VIEW */
-        .progress-bar-container { width: 100%; height: 6px; background: #eee; }
-        .progress-bar { width: 0%; height: 100%; background: var(--accento); transition: width 0.3s; }
-        
+        /* CHAT VIEW NORMALE */
+        .progress-bar-container { width: 100%; height: 6px; background: #eee; } .progress-bar { width: 0%; height: 100%; background: var(--accento); transition: width 0.3s; }
         .chat-box { flex-grow: 1; padding: 20px; overflow-y: auto; background: var(--sfondo-chiaro); display: flex; flex-direction: column; gap: 12px; max-height: 480px; }
         .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: calc(var(--font-size-base) + 2px); line-height: 1.4; word-wrap: break-word; }
         .chat-bubble.tutor { background: var(--msg-tutor); align-self: flex-start; border-top-left-radius: 4px; }
         .chat-bubble.studente { background: var(--msg-studente); align-self: flex-end; border-top-right-radius: 4px; }
         .chat-bubble.sistema { background: var(--msg-sistema); align-self: center; text-align: center; font-size: var(--font-size-base); color: var(--secondario-hover); border-radius: 20px; padding: 6px 16px; }
         .chat-img { max-width: 100%; max-height: 250px; border-radius: 8px; margin-top: 8px; display: block; }
-        
         .input-area { padding: 15px; display: flex; gap: 10px; background: white; border-top: 1px solid var(--bordo); }
-        .input-area input { flex-grow: 1; }
-        .input-area button { width: auto; padding: 0 25px; }
+        .input-area input { flex-grow: 1; } .input-area button { width: auto; padding: 0 25px; }
         .btn-home-back { background: #eee; color: var(--testo); padding: 10px; border: none; cursor: pointer; font-weight: bold; width: 100%; text-align: center; border-top: 1px solid var(--bordo); font-size: var(--font-size-base); }
 
-        /* TEACHER DASHBOARD */
+        /* DOCENTE E EDITOR */
         .teacher-view { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
         .teacher-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid var(--bordo); }
         .student-row { background: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--bordo); cursor: pointer; transition: transform 0.1s; }
         .student-row:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .student-info { display: flex; flex-direction: column; gap: 4px; }
-        .student-name { font-weight: bold; font-size: calc(var(--font-size-base) + 2px); }
-        .student-meta { font-size: calc(var(--font-size-base) - 1px); color: var(--testo-light); }
-        
-        /* LOG VIEW & TEXTBOX */
+        .student-info { display: flex; flex-direction: column; gap: 4px; } .student-name { font-weight: bold; font-size: calc(var(--font-size-base) + 2px); } .student-meta { font-size: calc(var(--font-size-base) - 1px); color: var(--testo-light); }
         .report-box { background: #fff; border: 1px solid var(--bordo); border-radius: 12px; padding: 15px; font-family: monospace; font-size: var(--font-size-base); max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
+        .editor-layout { display: flex; gap: 15px; height: 480px; } .editor-sidebar { width: 30%; border-right: 1px solid var(--bordo); overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 10px; } .editor-form { width: 70%; overflow-y: auto; padding-left: 10px; display: flex; flex-direction: column; gap: 12px; }
+        .q-item-btn { width: 100%; padding: 10px; text-align: left; background: #eee; border: none; border-radius: 6px; font-size: calc(var(--font-size-base) - 1px); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .q-item-btn.active { background: var(--secondario); color: white; }
+        .image-preview-area { width: 100%; height: 120px; border: 2px dashed var(--bordo); border-radius: 8px; display: flex; justify-content: center; align-items: center; overflow: hidden; font-size: calc(var(--font-size-base) - 2px); color: var(--testo-light); } .image-preview-area img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* EDITOR VIEW */
-        .editor-layout { display: flex; gap: 15px; height: 480px; }
-        .editor-sidebar { width: 30%; border-right: 1px solid var(--bordo); overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 10px; }
-        .editor-form { width: 70%; overflow-y: auto; padding-left: 10px; display: flex; flex-direction: column; gap: 12px; }
-        .q-item-btn { width: 100%; padding: 10px; text-align: left; background: #eee; border: none; border-radius: 6px; font-size: calc(var(--font-size-base) - 1px); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .q-item-btn.active { background: var(--secondario); color: white; }
-        .image-preview-area { width: 100%; height: 120px; border: 2px dashed var(--bordo); border-radius: 8px; display: flex; justify-content: center; align-items: center; overflow: hidden; font-size: calc(var(--font-size-base) - 2px); color: var(--testo-light); }
-        .image-preview-area img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        /* ACCESSIBILITÀ – MIC BUTTON */
+        .btn-mic { background: #9C27B0; border: none; border-radius: 50%; width: 42px; height: 42px; min-width: 42px; color: white; font-size: 18px; cursor: pointer; transition: background 0.2s; display: none; align-items: center; justify-content: center; }
+        .btn-mic:hover { background: #7B1FA2; }
+        .btn-mic.ascolto { background: #E53935; animation: pulse-mic 1s infinite; }
+        .stt-attivo .btn-mic { display: flex; }
+        @keyframes pulse-mic { 0%, 100% { box-shadow: 0 0 0 0 rgba(229,57,53,0.5); } 50% { box-shadow: 0 0 0 10px rgba(229,57,53,0); } }
 
-        /* SETTINGS VIEW PANEL */
-        .settings-view { padding: 30px 20px; display: flex; flex-direction: column; gap: 20px; max-width: 500px; margin: 0 auto; width: 100%; }
-        .setting-item { display: flex; flex-direction: column; gap: 8px; }
-        .setting-label { font-weight: bold; font-size: calc(var(--font-size-base) + 1px); }
-        .preview-box { padding: 15px; background: var(--sfondo-chiaro); border-radius: 8px; border: 1px solid var(--bordo); min-height: 70px; margin-top: 10px; }
+        /* IMPOSTAZIONI */
+        .settings-view { padding: 30px 20px; display: flex; flex-direction: column; gap: 20px; max-width: 500px; margin: 0 auto; width: 100%; } .setting-item { display: flex; flex-direction: column; gap: 8px; } .setting-label { font-weight: bold; font-size: calc(var(--font-size-base) + 1px); } .preview-box { padding: 15px; background: var(--sfondo-chiaro); border-radius: 8px; border: 1px solid var(--bordo); min-height: 70px; margin-top: 10px; }
+
+        /* =========================================
+           MODALITÀ RPG - STILE POKÉMON
+        ========================================= */
+        .rpg-arena { background: linear-gradient(to bottom, #4CA1AF 0%, #C4E0E5 100%); height: 280px; position: relative; border-radius: 12px; border: 3px solid var(--bordo); margin-bottom: 15px; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.1); }
+        .rpg-hud { position: absolute; background: rgba(255, 255, 255, 0.95); padding: 10px; border-radius: 8px; border: 2px solid #333; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .hud-boss { top: 15px; right: 15px; width: 160px; } .hud-player { bottom: 15px; left: 15px; width: 160px; }
+        .hp-text { font-weight: bold; font-size: 13px; display: flex; justify-content: space-between;}
+        .hp-bar-bg { height: 12px; background: #ddd; border-radius: 6px; margin-top: 5px; overflow: hidden; border: 1px solid #999; }
+        .hp-fill { height: 100%; background: #4CAF50; transition: width 0.4s ease, background-color 0.4s ease; }
+
+        .rpg-sprite { position: absolute; transition: all 0.3s; background-repeat: no-repeat; }
+        .sprite-boss { top: 20px; left: 55%; width: 160px; height: 160px; background-image: url('boss.png'); background-size: contain; background-position: center bottom; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.2)); color: transparent; }
+        .sprite-player { bottom: 30px; right: 55%; width: 120px; height: 120px; background-image: url('robot.png'); background-size: 500% 200%; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.2)); }
+
+        .face-pensieroso   { background-position: 50% 0%; }     
+        .face-felice       { background-position: 0% 0%; }      
+        .face-contento     { background-position: 25% 0%; }     
+        .face-triste       { background-position: 100% 0%; }    
+        .face-morto        { background-position: 50% 100%; }   
+        .face-super-felice { background-position: 0% 100%; }    
+
+        .rpg-dialog { background: #fff; border: 3px solid #333; border-radius: 12px; padding: 15px; min-height: 100px; max-height: 150px; overflow-y: auto; font-weight: 600; font-size: 15px; margin-bottom: 10px; box-shadow: 0 4px 0 #ccc; }
+
+        @keyframes rpgFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes rpgAttack { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(50px) scale(1.2); } 100% { transform: translateX(0) scale(1); } }
+        @keyframes rpgBossAttack { 0% { transform: translateX(0) scale(1); } 50% { transform: translateX(-50px) scale(1.2); } 100% { transform: translateX(0) scale(1); } }
+        @keyframes rpgHurt { 0%, 100% { transform: translateX(0); filter: brightness(1); } 25%, 75% { transform: translateX(-8px); filter: brightness(0.5) sepia(1) hue-rotate(-50deg) saturate(5); } 50% { transform: translateX(8px); } }
+        @keyframes rpgTypingWiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+
+        .anim-idle { animation: rpgFloat 3s infinite ease-in-out; }
+        .anim-attack { animation: rpgAttack 0.5s ease-out; }
+        .anim-boss-attack { animation: rpgBossAttack 0.5s ease-out; }
+        .anim-hurt { animation: rpgHurt 0.5s; }
+        .anim-typing-wiggle { animation: rpgTypingWiggle 0.4s infinite; }
     </style>
 </head>
 <body>
 
     <div class="container active" id="view-login">
-        <div class="login-header-bar">
-            <button class="btn-settings-black" onclick="apriImpostazioni('view-login')">⚙️</button>
-        </div>
+        <div class="login-header-bar"><button class="btn-settings-black" onclick="apriImpostazioni('view-login')">⚙️</button></div>
         <div class="login-wrap">
+            
             <div class="emoji-deco" style="top:10%; left:10%;">📚</div>
             <div class="emoji-deco" style="top:15%; right:10%;">✏️</div>
             <div class="emoji-deco" style="bottom:15%; left:8%;">🎒</div>
@@ -131,726 +127,628 @@
 
             <div class="login-title">🎓 Tutor Matematica</div>
             <div class="login-subtitle">Impara divertendoti! ✨</div>
-
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchLoginTab('alunni')">👦 Area Alunni</button>
                 <button class="tab-btn" onclick="switchLoginTab('docenti')">👨‍🏫 Area Docenti</button>
             </div>
-
             <div class="tab-panel active" id="panel-alunni">
                 <div style="color: var(--primario); font-weight: bold; margin-bottom: 10px;">Ciao! Pronto a imparare? 🚀</div>
                 <input type="text" id="stud-user" placeholder="Username">
                 <input type="password" id="stud-pass" placeholder="Password">
                 <select id="stud-classe">
                     <option value="">Classe (solo per nuovi utenti)</option>
-                    <option value="1">Classe 1ª</option>
-                    <option value="2">Classe 2ª</option>
-                    <option value="3">Classe 3ª</option>
-                    <option value="4">Classe 4ª</option>
-                    <option value="5">Classe 5ª</option>
+                    <option value="1">Classe 1ª</option><option value="2">Classe 2ª</option><option value="3">Classe 3ª</option><option value="4">Classe 4ª</option><option value="5">Classe 5ª</option>
                 </select>
-                <button class="btn-main btn-green" onclick="loginAlunno()">Accedi 🚀</button>
-                <button class="btn-main btn-outline" onclick="registraAlunno()">Nuovo? Registrati ✨</button>
+                <button class="btn-main btn-green" onclick="loginAlunno()">Accedi</button>
+                <button class="btn-main btn-outline" onclick="registraAlunno()">Nuovo? Registrati</button>
+                <hr style="margin: 15px 0; border: 1px solid #ddd;">
+                <button class="btn-main" style="background: #9C27B0; color: white;" onclick="chiediClasseEAvviaRPG()">Modalità Battaglia RPG</button>
             </div>
-
             <div class="tab-panel" id="panel-docenti">
                 <div style="color: var(--secondario); font-weight: bold; margin-bottom: 10px;">Area Riservata Docenti 👨‍🏫</div>
-                <input type="text" id="prof-user" placeholder="Username docente">
-                <input type="password" id="prof-pass" placeholder="Password">
-                <button class="btn-main btn-blue" onclick="loginDocente()">Accedi 👨‍🏫</button>
-                <div style="font-size: 11px; color: var(--testo-light); margin-top: 10px;">Account predefinito:<br>Username: prof | Password: admin</div>
+                <input type="text" id="prof-user" placeholder="Username docente"><input type="password" id="prof-pass" placeholder="Password">
+                <button class="btn-main btn-blue" onclick="loginDocente()">Accedi</button>
             </div>
-
             <div class="error-lbl" id="login-error"></div>
         </div>
     </div>
 
-
-    <div class="container" id="view-chat">
-        <div class="header">
-            <div class="header-title">🎓 Tutor Matematica</div>
-            <div style="display:flex; align-items:center; gap:12px;">
-                <div class="header-hud" id="chat-hud-quesito"></div>
-                <button class="btn-settings-icon" onclick="apriImpostazioni('view-chat')">⚙️</button>
-            </div>
+    <div class="container" id="view-rpg-rules">
+        <div class="header" style="background: #333;">
+            <div class="header-title">Regole della Battaglia</div>
+            <button class="btn-settings-icon" onclick="tornaHome()">X</button>
         </div>
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="chat-progressbar"></div>
+        <div style="padding: 30px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px;">
+            <h2 style="color: #9C27B0;">Benvenuto nell'Arena!</h2>
+            <p style="font-size: 16px; line-height: 1.6; text-align: left; background: var(--sfondo-chiaro); padding: 20px; border-radius: 12px; border: 1px solid var(--bordo);">
+                Sei pronto ad affrontare il potente <b>Math Boss</b>?<br><br>
+                <b>1.</b> Il Boss ti lancerà degli attacchi (<b>quesiti matematici</b>).<br>
+                <b>2.</b> La potenza del tuo contrattacco dipende dalla tua <b>spiegazione</b>!<br>
+                &nbsp;&nbsp;&nbsp;• Ottima spiegazione = Colpo Critico (-40 PV)<br>
+                &nbsp;&nbsp;&nbsp;• Buona spiegazione = Attacco (-25 PV)<br>
+                &nbsp;&nbsp;&nbsp;• Accettabile = Attacco debole (-15 PV)<br>
+                <b>3.</b> <b>Se sbagli la matematica</b>, il Boss ti colpirà e perderai 20 PV.<br>
+            </p>
+            <button class="btn-main" style="background: #4CAF50; font-size: 18px; padding: 15px; margin-top: 10px;" onclick="iniziaBattagliaVera()">Ho capito, Inizia la Battaglia!</button>
         </div>
-        
-        <div class="chat-box" id="chat-box-content"></div>
-
-        <div class="input-area">
-            <input type="text" id="chat-input" placeholder="Scrivi qui la tua risposta..." onkeypress="handleChatEnter(event)">
-            <button class="btn-main btn-green" id="btn-invia-chat" onclick="inviaMessaggioChat()">Invia 💬</button>
-        </div>
-        <button class="btn-home-back" onclick="tornaHome()">← Torna alla Home</button>
     </div>
 
-
-    <div class="container" id="view-docente">
-        <div class="teacher-view">
-            <div class="teacher-header">
-                <h2>👨‍🏫 Cruscotto Docente</h2>
-                <div style="display:flex; gap:8px;">
-                    <button class="btn-main btn-blue" style="width:auto; padding:8px 16px; background:gray;" onclick="apriImpostazioni('view-docente')">⚙️ Impostazioni</button>
-                    <button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="tornaHome()">🏠 Esci</button>
+    <div class="container" id="view-rpg">
+        <div class="header" style="background: #333;">
+            <div class="header-title">Battaglia Matematica</div>
+            <button class="btn-settings-icon" onclick="tornaHome()">X</button>
+        </div>
+        <div style="padding: 15px; display: flex; flex-direction: column; flex-grow: 1;">
+            <div class="rpg-arena">
+                <div class="rpg-hud hud-boss">
+                    <div class="hp-text"><span>Math Boss</span><span id="hp-txt-boss">100/100</span></div>
+                    <div class="hp-bar-bg"><div class="hp-fill" id="hp-bar-boss"></div></div>
                 </div>
-            </div>
-
-            <button class="btn-main btn-green" style="background:#FF6B35;" onclick="apriEditorContenuti()">📝 Gestisci Quesiti e Obiettivi</button>
-
-            <h3>📚 Elenco Alunni</h3>
-            <div id="teacher-studenti-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-        </div>
-    </div>
-
-
-    <div class="container" id="view-report-alunno">
-        <div class="teacher-view">
-            <div class="teacher-header">
-                <h2 id="report-student-title">📅 Sessioni Alunno</h2>
-                <button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="switchView('view-docente')">⬅ Indietro</button>
-            </div>
-            <div id="report-sessioni-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-        </div>
-    </div>
-
-
-    <div class="container" id="view-log-giorno">
-        <div class="teacher-view">
-            <div class="teacher-header">
-                <h2 id="log-giorno-title">📊 Dettaglio Registro</h2>
-                <button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" id="btn-back-to-sessions">⬅ Indietro</button>
-            </div>
-            <div class="report-box" id="log-giorno-box"></div>
-        </div>
-    </div>
-
-
-    <div class="container" id="view-editor">
-        <div class="teacher-view" style="gap:12px;">
-            <div class="teacher-header">
-                <h2>📝 Editor Contenuti del Sistema</h2>
-                <button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="switchView('view-docente')">❌ Chiudi</button>
-            </div>
-            
-            <div class="tabs" style="max-width:100%;">
-                <button class="tab-btn active" id="tab-editor-q" onclick="switchEditorTab('q')">📚 Quesiti</button>
-                <button class="tab-btn" id="tab-editor-o" onclick="switchEditorTab('o')">🎯 Obiettivi</button>
-            </div>
-
-            <div id="panel-editor-quesiti" style="display:flex; flex-direction:column; gap:10px;">
-                <div style="display:flex; gap:10px; background:#eee; padding:10px; border-radius:8px; align-items:center;">
-                    <label>Classe:</label>
-                    <select id="edit-filter-classe" style="width:80px; padding:6px;" onchange="renderEditorListaQuesiti()">
-                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-                    </select>
-                    <label>Livello:</label>
-                    <select id="edit-filter-livello" style="width:130px; padding:6px;" onchange="renderEditorListaQuesiti()">
-                        <option value="assessment">assessment</option><option value="facile">facile</option><option value="medio">medio</option><option value="difficile">difficile</option>
-                    </select>
-                    <button class="btn-main btn-blue" style="width:auto; padding:6px 12px; font-size:13px;" onclick="aggiungiNuovoQuesitoInPool()">➕ Aggiungi Nuovo</button>
+                <div class="rpg-hud hud-player">
+                    <div class="hp-text"><span>Tu (Eroe)</span><span id="hp-txt-player">100/100</span></div>
+                    <div class="hp-bar-bg"><div class="hp-fill" id="hp-bar-player"></div></div>
                 </div>
-
-                <div class="editor-layout">
-                    <div class="editor-sidebar" id="edit-lista-quesiti-container"></div>
-                    <div class="editor-form">
-                        <label style="font-weight:bold; font-size:13px;">Testo Problema:</label>
-                        <textarea id="edit-q-testo" rows="3"></textarea>
-                        
-                        <label style="font-weight:bold; font-size:13px;">Immagine (File o Base64 URL):</label>
-                        <div style="display:flex; gap:6px;">
-                            <input type="text" id="edit-q-imgurl" placeholder="Incolla data:image URL o carica un file">
-                            <input type="file" id="edit-q-file" style="display:none;" onchange="handleFileCaricamento(event)">
-                            <button class="btn-main btn-blue" style="width:auto; padding:0 12px; font-size:13px;" onclick="document.getElementById('edit-q-file').click()">📁 Sfoglia</button>
-                        </div>
-                        <div class="image-preview-area" id="edit-q-imgpreview">Nessuna immagine presente</div>
-
-                        <label style="font-weight:bold; font-size:13px;">Risposta Corretta:</label>
-                        <input type="text" id="edit-q-risposta">
-
-                        <label style="font-weight:bold; font-size:13px;">Indizio 1:</label>
-                        <textarea id="edit-q-indizio1" rows="1"></textarea>
-
-                        <label style="font-weight:bold; font-size:13px;">Indizio 2:</label>
-                        <textarea id="edit-q-indizio2" rows="1"></textarea>
-
-                        <label style="font-weight:bold; font-size:13px;">Soluzione Completa:</label>
-                        <textarea id="edit-q-soluzione" rows="2"></textarea>
-
-                        <div style="display:flex; gap:10px; margin-top:5px;">
-                            <button class="btn-main btn-green" onclick="salvaQuesitoCorrenteInMemoria()">✅ Salva Modifiche</button>
-                            <button class="btn-main" style="background:#dc3545;" onclick="eliminaQuesitoCorrenteInMemoria()">🗑️ Elimina</button>
-                        </div>
-                    </div>
-                </div>
+                <div class="rpg-sprite sprite-boss anim-idle" id="rpg-boss-sprite"></div>
+                <div class="rpg-sprite sprite-player face-pensieroso anim-idle" id="rpg-player-sprite"></div>
             </div>
-
-            <div id="panel-editor-obiettivi" style="display:none; flex-direction:column; gap:10px;">
-                <textarea id="edit-obiettivi-text" style="height:420px; font-family:monospace; font-size:13px;"></textarea>
-            </div>
-
-            <button class="btn-main btn-green" style="padding:15px; font-size:16px; margin-top:10px;" onclick="salvaTuttiIContenutiSulServer()">💾 SALVA TUTTO SUL SERVER</button>
-        </div>
-    </div>
-
-
-    <div class="container" id="view-impostazioni">
-        <div class="settings-view">
-            <h2 style="color: var(--primario); text-align: center; margin-bottom: 10px;">⚙️ Impostazioni Interfaccia</h2>
-            <p style="color: var(--testo-light); text-align: center; font-size: 13px; margin-bottom: 15px;">Modifica il font, le dimensioni e la velocità</p>
-            
-            <div class="setting-item">
-                <label class="setting-label">Font Family:</label>
-                <select id="setting-font-family" onchange="aggiornaAnteprimaSettings()">
-                    <option value="'Helvetica', Arial, sans-serif">Helvetica</option>
-                    <option value="'Arial', sans-serif">Arial</option>
-                    <option value="'Times New Roman', serif">Times New Roman</option>
-                    <option value="'Courier New', monospace">Courier New</option>
-                    <option value="'Georgia', serif">Georgia</option>
-                    <option value="'Verdana', sans-serif">Verdana</option>
-                </select>
-            </div>
-
-            <div class="setting-item">
-                <div style="display:flex; justify-content:space-between;">
-                    <label class="setting-label">Dimensione Font:</label>
-                    <span id="setting-font-size-val" style="font-weight:bold; color:var(--primario);">14px</span>
-                </div>
-                <input type="range" id="setting-font-size" min="11" max="22" value="14" oninput="aggiornaAnteprimaSettings()">
-            </div>
-
-            <div class="setting-item">
-                <label class="setting-label">Velocità di Scrittura (Tutor):</label>
-                <select id="setting-speed" onchange="aggiornaAnteprimaSettings()">
-                    <option value="10">Veloce</option>
-                    <option value="20">Normale</option>
-                    <option value="40">Lenta</option>
-                    <option value="0">Istantanea (Nessuno scorrimento)</option>
-                </select>
-            </div>
-
-            <div class="setting-item">
-                <label class="setting-label">Anteprima:</label>
-                <div class="preview-box" id="settings-preview-box">
-                    Il mio testo di esempio 123<br>Prova anche con più righe!
-                </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
-                <button class="btn-main btn-green" style="padding:15px;" onclick="salvaEApplicaImpostazioni()">💾 Salva e Applica</button>
-                <button class="btn-main" style="background:gray; padding:12px;" onclick="chiudiImpostazioni()">❌ Annulla</button>
+            <div class="rpg-dialog" id="rpg-dialog-text">Caricamento del combattimento...</div>
+            <div class="input-area" style="border: 2px solid var(--bordo); border-radius: 12px; padding: 10px;">
+                <input type="text" id="rpg-input" placeholder="Scrivi la risposta o un comando..." onkeypress="if(event.key==='Enter') inviaInputRPG()">
+                <button class="btn-mic" id="btn-mic-rpg" title="Parla" onclick="avviaMicrofono('rpg-input','btn-mic-rpg')">🎤</button>
+                <button class="btn-main" style="background: #E53935; width: auto; padding: 0 25px;" id="btn-invia-rpg" onclick="inviaInputRPG()">Azione</button>
             </div>
         </div>
     </div>
+
+    <div class="container" id="view-chat"><div class="header"><div class="header-title">🎓 Tutor Matematica</div><div style="display:flex; align-items:center; gap:12px;"><div class="header-hud" id="chat-hud-quesito"></div><button class="btn-settings-icon" onclick="apriImpostazioni('view-chat')">⚙️</button></div></div><div class="progress-bar-container"><div class="progress-bar" id="chat-progressbar"></div></div><div class="chat-box" id="chat-box-content"></div><div class="input-area"><input type="text" id="chat-input" placeholder="Scrivi qui la tua risposta..." onkeypress="handleChatEnter(event)"><button class="btn-mic" id="btn-mic-chat" title="Parla" onclick="avviaMicrofono('chat-input','btn-mic-chat')">🎤</button><button class="btn-main btn-green" id="btn-invia-chat" onclick="inviaMessaggioChat()">Invia</button></div><button class="btn-home-back" onclick="tornaHome()">← Torna alla Home</button></div>
+    <div class="container" id="view-docente"><div class="teacher-view"><div class="teacher-header"><h2>👨‍🏫 Cruscotto Docente</h2><div style="display:flex; gap:8px;"><button class="btn-main btn-blue" style="width:auto; padding:8px 16px; background:gray;" onclick="apriImpostazioni('view-docente')">⚙️</button><button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="tornaHome()">Esci</button></div></div><button class="btn-main btn-green" style="background:#FF6B35;" onclick="apriEditorContenuti()">Gestisci Quesiti e Obiettivi</button><h3>Elenco Alunni</h3><div id="teacher-studenti-list" style="display:flex; flex-direction:column; gap:8px;"></div></div></div>
+    <div class="container" id="view-report-alunno"><div class="teacher-view"><div class="teacher-header"><h2 id="report-student-title">Sessioni Alunno</h2><button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="switchView('view-docente')">Indietro</button></div><div id="report-sessioni-list" style="display:flex; flex-direction:column; gap:8px;"></div></div></div>
+    <div class="container" id="view-log-giorno"><div class="teacher-view"><div class="teacher-header"><h2 id="log-giorno-title">Dettaglio Registro</h2><button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" id="btn-back-to-sessions">Indietro</button></div><div class="report-box" id="log-giorno-box"></div></div></div>
+    <div class="container" id="view-editor"><div class="teacher-view" style="gap:12px;"><div class="teacher-header"><h2>Editor Contenuti</h2><button class="btn-main btn-blue" style="width:auto; padding:8px 16px;" onclick="switchView('view-docente')">X</button></div><div class="tabs" style="max-width:100%;"><button class="tab-btn active" id="tab-editor-q" onclick="switchEditorTab('q')">Quesiti</button><button class="tab-btn" id="tab-editor-o" onclick="switchEditorTab('o')">Obiettivi</button></div><div id="panel-editor-quesiti" style="display:flex; flex-direction:column; gap:10px;"><div style="display:flex; gap:10px; background:#eee; padding:10px; border-radius:8px; align-items:center;"><label>Classe:</label><select id="edit-filter-classe" style="width:80px; padding:6px;" onchange="renderEditorListaQuesiti()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select><label>Livello:</label><select id="edit-filter-livello" style="width:130px; padding:6px;" onchange="renderEditorListaQuesiti()"><option value="assessment">assessment</option><option value="facile">facile</option><option value="medio">medio</option><option value="difficile">difficile</option></select><button class="btn-main btn-blue" style="width:auto; padding:6px 12px; font-size:13px;" onclick="aggiungiNuovoQuesitoInPool()">Nuovo</button><button class="btn-main" style="background:#FF9800; width:auto; padding:6px 12px; font-size:13px;" onclick="toggleImportaBlocco()">📋 Importa in blocco</button></div><div id="panel-import-bulk" style="display:none; flex-direction:column; gap:10px; background:#fffde7; border:2px dashed #FFA726; border-radius:8px; padding:14px;"><div style="font-weight:bold; font-size:13px; color:#e65100;">📋 Importazione Rapida — un blocco per quesito, separati da <code>---</code></div><div style="font-size:12px; color:#5d4037; background:#fff8e1; padding:8px 10px; border-radius:6px; line-height:1.7;"><b>Formato per ogni blocco:</b><br><code>CLASSE:</code> 1-5 &nbsp;|&nbsp; <code>LIVELLO:</code> assessment / facile / medio / difficile<br><code>Q:</code> Testo &nbsp;|&nbsp; <code>R:</code> Risposta &nbsp;|&nbsp; <code>I1:</code> Indizio 1 &nbsp;|&nbsp; <code>I2:</code> Indizio 2 &nbsp;|&nbsp; <code>S:</code> Soluzione<br><span style="color:#b71c1c;">CLASSE, LIVELLO e Q: sono obbligatori.</span> Le immagini si aggiungono manualmente dopo.</div><textarea id="bulk-import-textarea" rows="10" style="font-family:monospace; font-size:13px;" placeholder="CLASSE: 3&#10;LIVELLO: facile&#10;Q: Quanto fa 5 + 5?&#10;R: 10&#10;I1: Pensa a raggruppare in decine&#10;I2: Conta 5 dita di una mano e 5 dell&#39;altra&#10;S: 5 + 5 = 10&#10;---&#10;CLASSE: 5&#10;LIVELLO: difficile&#10;Q: Prossimo quesito...&#10;R: ...&#10;I1: ...&#10;I2: ...&#10;S: ..."></textarea><div style="display:flex; gap:8px;"><button class="btn-main btn-green" style="padding:8px 16px; width:auto;" onclick="parseEImportaBlocco()">✅ Analizza e Importa</button><button class="btn-main" style="background:gray; padding:8px 16px; width:auto;" onclick="toggleImportaBlocco()">Annulla</button></div><div id="bulk-import-feedback" style="font-size:13px; font-weight:bold; min-height:18px;"></div></div><div class="editor-layout"><div class="editor-sidebar" id="edit-lista-quesiti-container"></div><div class="editor-form"><label style="font-weight:bold; font-size:13px;">Testo Problema:</label><textarea id="edit-q-testo" rows="3"></textarea><label style="font-weight:bold; font-size:13px;">Immagine (URL o File):</label><div style="display:flex; gap:6px;"><input type="text" id="edit-q-imgurl" placeholder="Incolla data:image URL o carica"><input type="file" id="edit-q-file" style="display:none;" onchange="handleFileCaricamento(event)"><button class="btn-main btn-blue" style="width:auto; padding:0 12px; font-size:13px;" onclick="document.getElementById('edit-q-file').click()">Sfoglia</button></div><div class="image-preview-area" id="edit-q-imgpreview">Nessuna immagine</div><label style="font-weight:bold; font-size:13px;">Risposta Corretta:</label><input type="text" id="edit-q-risposta"><label style="font-weight:bold; font-size:13px;">Indizio 1:</label><textarea id="edit-q-indizio1" rows="1"></textarea><label style="font-weight:bold; font-size:13px;">Indizio 2:</label><textarea id="edit-q-indizio2" rows="1"></textarea><label style="font-weight:bold; font-size:13px;">Soluzione:</label><textarea id="edit-q-soluzione" rows="2"></textarea><div style="display:flex; gap:10px; margin-top:5px;"><button class="btn-main btn-green" onclick="salvaQuesitoCorrenteInMemoria()">Salva</button><button class="btn-main" style="background:#dc3545;" onclick="eliminaQuesitoCorrenteInMemoria()">Elimina</button></div></div></div></div><div id="panel-editor-obiettivi" style="display:none; flex-direction:column; gap:10px;"><textarea id="edit-obiettivi-text" style="height:420px; font-family:monospace; font-size:13px;"></textarea></div><button class="btn-main btn-green" style="padding:15px; font-size:16px; margin-top:10px;" onclick="salvaTuttiIContenutiSulServer()">SALVA TUTTO SUL SERVER</button></div></div>
+    <div class="container" id="view-impostazioni"><div class="settings-view"><h2 style="color: var(--primario); text-align: center; margin-bottom: 10px;">Impostazioni Interfaccia</h2><p style="color: var(--testo-light); text-align: center; font-size: 13px; margin-bottom: 15px;">Modifica il font, le dimensioni e la velocità</p><div class="setting-item"><label class="setting-label">Font Family:</label><select id="setting-font-family" onchange="aggiornaAnteprimaSettings()"><option value="'Helvetica', Arial, sans-serif">Helvetica</option><option value="'Arial', sans-serif">Arial</option><option value="'Times New Roman', serif">Times New Roman</option><option value="'Courier New', monospace">Courier New</option><option value="'Georgia', serif">Georgia</option><option value="'Verdana', sans-serif">Verdana</option></select></div><div class="setting-item"><div style="display:flex; justify-content:space-between;"><label class="setting-label">Dimensione Font:</label><span id="setting-font-size-val" style="font-weight:bold; color:var(--primario);">14px</span></div><input type="range" id="setting-font-size" min="11" max="22" value="14" oninput="aggiornaAnteprimaSettings()"></div><div class="setting-item"><label class="setting-label">Velocità Scrittura:</label><select id="setting-speed" onchange="aggiornaAnteprimaSettings()"><option value="10">Veloce</option><option value="20">Normale</option><option value="40">Lenta</option><option value="0">Istantanea</option></select></div><div class="setting-item"><label class="setting-label">Anteprima:</label><div class="preview-box" id="settings-preview-box">Test di prova...</div></div>
+
+        <div class="setting-item" style="border-top: 2px solid var(--bordo); padding-top: 15px;">
+          <label class="setting-label">♿ Accessibilità</label>
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+
+            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:calc(var(--font-size-base) + 1px);">
+              <input type="checkbox" id="setting-tts" style="width:20px; height:20px;" onchange="toggleTTSOptions()">
+              🔊 Lettura ad alta voce (Text-to-Speech)
+            </label>
+            <div id="tts-options" style="display:none; flex-direction:column; gap:8px; padding:10px 10px 10px 30px; background:var(--sfondo-chiaro); border-radius:8px;">
+              <label style="font-size:13px; font-weight:bold;">Voce:</label>
+              <select id="setting-tts-voice" style="padding:8px; border-radius:8px; border:2px solid var(--bordo);"></select>
+              <label style="font-size:13px; font-weight:bold;">Velocità lettura:</label>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <input type="range" id="setting-tts-speed" min="0.5" max="2" step="0.1" value="1" style="flex-grow:1;" oninput="document.getElementById('setting-tts-speed-val').textContent=parseFloat(this.value).toFixed(1)+'x'">
+                <span id="setting-tts-speed-val" style="font-weight:bold; color:var(--primario); width:40px;">1.0x</span>
+              </div>
+              <button onclick="testTTS()" class="btn-main" style="background:#9C27B0; padding:8px; font-size:13px; width:auto;">▶ Ascolta esempio</button>
+            </div>
+
+            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:calc(var(--font-size-base) + 1px);">
+              <input type="checkbox" id="setting-stt" style="width:20px; height:20px;" onchange="toggleSTTNote()">
+              🎤 Dettatura risposta (Speech-to-Text)
+            </label>
+            <div id="stt-note" style="display:none; font-size:12px; color:#795548; padding:8px 10px; background:#fff8e1; border-radius:8px; line-height:1.6;">
+              Il pulsante 🎤 apparirà accanto al campo di testo.<br>
+              <b>Clicca per iniziare a parlare</b> — clicca di nuovo per fermarti.<br>
+              Il testo viene inserito automaticamente nel campo risposta.<br>
+              <span style="color:#b71c1c;">⚠️ Richiede connessione internet e browser Chrome o Edge.</span>
+            </div>
+
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;"><button class="btn-main btn-green" style="padding:15px;" onclick="salvaEApplicaImpostazioni()">Salva e Applica</button><button class="btn-main" style="background:gray; padding:12px;" onclick="chiudiImpostazioni()">Annulla</button></div></div></div>
 
     <script>
-        let utenteCorrente = "";
-        let ruoloCorrente = "";
-        let classeCorrente = "5";
-        let chatState = {};
-        let poolProblemiGlobal = {};
-        let obiettiviGlobal = "";
-        let quesitoIndexCorrente = null;
-        let immagineBase64Corrente = null;
-        let vistaPrecedenteSettings = "view-login";
-        
-        let typingSpeedMs = 20;
+        let utenteCorrente = ""; let ruoloCorrente = ""; let classeCorrente = "5"; let chatState = {};
+        let poolProblemiGlobal = {}; let obiettiviGlobal = ""; let quesitoIndexCorrente = null; let immagineBase64Corrente = null; let vistaPrecedenteSettings = "view-login"; let typingSpeedMs = 20;
 
-        function caricaUIPreferences() {
-            const preferenzaFont = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif";
-            const preferenzaSize = localStorage.getItem('tutor_font_size') || "14";
-            const preferenzaSpeed = localStorage.getItem('tutor_typing_speed') || "20";
-            
-            document.documentElement.style.setProperty('--font-family', preferenzaFont);
-            document.documentElement.style.setProperty('--font-size-base', preferenzaSize + 'px');
-            
-            document.getElementById('setting-font-family').value = preferenzaFont;
-            document.getElementById('setting-font-size').value = preferenzaSize;
-            document.getElementById('setting-font-size-val').textContent = preferenzaSize + 'px';
-            document.getElementById('setting-speed').value = preferenzaSpeed;
-            
-            typingSpeedMs = parseInt(preferenzaSpeed, 10);
+        // Variabili RPG
+        let rpgPlayerHP = 100;
+        let rpgBossHP = 100;
+        let rpgTypingTimer;
+
+        async function chiediClasseEAvviaRPG() {
+            const classe = prompt("Inserisci la tua classe (1, 2, 3, 4 o 5) per calibrare il Math Boss:");
+            if (classe && ['1','2','3','4','5'].includes(classe.trim())) {
+                const classeScelta = classe.trim();
+                utenteCorrente = "eroe_" + Math.floor(Math.random() * 100000);
+                await fetch('/api/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: utenteCorrente, password: "rpg", classe: classeScelta}) });
+                ruoloCorrente = 'studente'; classeCorrente = classeScelta;
+                switchView('view-rpg-rules');
+            } else if (classe) { alert("Per favore, inserisci un numero da 1 a 5."); }
         }
 
-        function apriImpostazioni(provenienzaId) {
-            vistaPrecedenteSettings = provenienzaId;
-            const fontAttuale = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif";
-            const sizeAttuale = localStorage.getItem('tutor_font_size') || "14";
-            const speedAttuale = localStorage.getItem('tutor_typing_speed') || "20";
-            
-            document.getElementById('setting-font-family').value = fontAttuale;
-            document.getElementById('setting-font-size').value = sizeAttuale;
-            document.getElementById('setting-speed').value = speedAttuale;
-            
-            aggiornaAnteprimaSettings();
-            switchView('view-impostazioni');
+        async function iniziaBattagliaVera() {
+            rpgPlayerHP = 100; rpgBossHP = 100;
+            aggiornaBarraHP('player', rpgPlayerHP); aggiornaBarraHP('boss', rpgBossHP);
+            const player = document.getElementById('rpg-player-sprite'); const boss = document.getElementById('rpg-boss-sprite');
+            boss.style.display = 'block'; 
+            player.className = "rpg-sprite sprite-player face-pensieroso anim-idle";
+            boss.className = "rpg-sprite sprite-boss anim-idle";
+            chatState = { fase: "attesa_ok", classe_studente: classeCorrente, livello_corrente: "medio", problemi_usati: {"facile": [], "medio": [], "difficile": []} };
+            switchView('view-rpg');
+            document.getElementById('rpg-dialog-text').innerHTML = "<i>Preparazione del Boss in corso...</i>";
+            await inviaMessaggioAlBackendRPG("ok"); 
         }
 
-        function aggiornaAnteprimaSettings() {
-            const fontSel = document.getElementById('setting-font-family').value;
-            const sizeSel = document.getElementById('setting-font-size').value;
-            document.getElementById('setting-font-size-val').textContent = sizeSel + 'px';
-            const pBox = document.getElementById('settings-preview-box');
-            pBox.style.fontFamily = fontSel;
-            pBox.style.fontSize = sizeSel + 'px';
-        }
+        document.getElementById('rpg-input').addEventListener('input', () => {
+            const player = document.getElementById('rpg-player-sprite');
+            player.className = 'rpg-sprite sprite-player face-felice anim-typing-wiggle';
+            clearTimeout(rpgTypingTimer);
+            rpgTypingTimer = setTimeout(() => {
+                if(rpgPlayerHP > 0 && rpgBossHP > 0) player.className = 'rpg-sprite sprite-player face-pensieroso anim-idle';
+            }, 500);
+        });
 
-        function salvaEApplicaImpostazioni() {
-            const fontSel = document.getElementById('setting-font-family').value;
-            const sizeSel = document.getElementById('setting-font-size').value;
-            const speedSel = document.getElementById('setting-speed').value;
-            
-            localStorage.setItem('tutor_font_family', fontSel);
-            localStorage.setItem('tutor_font_size', sizeSel);
-            localStorage.setItem('tutor_typing_speed', speedSel);
-            
-            document.documentElement.style.setProperty('--font-family', fontSel);
-            document.documentElement.style.setProperty('--font-size-base', sizeSel + 'px');
-            typingSpeedMs = parseInt(speedSel, 10);
-            
-            alert("✅ Impostazioni applicate e salvate in locale correttamente!");
-            switchView(vistaPrecedenteSettings);
-        }
-
-        function chiudiImpostazioni() { switchView(vistaPrecedenteSettings); }
-
-        function switchView(viewId) {
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-        }
-
-        function switchLoginTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            if(tab === 'alunni') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('panel-alunni').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('panel-docenti').classList.add('active');
+        async function inviaInputRPG() {
+            const inp = document.getElementById('rpg-input');
+            let msg = inp.value.trim();
+            if(!msg) {
+                if(chatState.fase === "attesa_ok" || chatState.fase === "attesa_ok_prossimo") { msg = "ok"; } 
+                else { return; }
             }
-        }
-
-        function tornaHome() {
-            utenteCorrente = ""; ruoloCorrente = ""; chatState = {};
-            document.getElementById('stud-user').value = "";
-            document.getElementById('stud-pass').value = "";
-            document.getElementById('prof-user').value = "";
-            document.getElementById('prof-pass').value = "";
-            document.getElementById('login-error').textContent = "";
-            switchView('view-login');
-        }
-
-        async function loginAlunno() {
-            const u = document.getElementById('stud-user').value.trim();
-            const p = document.getElementById('stud-pass').value.trim();
-            if(!u || !p) { showLoginError("Compila tutti i campi!"); return; }
-            const res = await fetch('/api/login', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: u, password: p})
-            });
-            const data = await res.json();
-            if(data.status === 'success' && data.ruolo === 'studente') { avviaSessioneAlunno(u, data.classe); } 
-            else { showLoginError(data.message || "Credenziali errate o account non alunno."); }
-        }
-
-        async function registraAlunno() {
-            const u = document.getElementById('stud-user').value.trim();
-            const p = document.getElementById('stud-pass').value.trim();
-            const cl = document.getElementById('stud-classe').value;
-            if(!u || !p || !cl) { showLoginError("Specificare username, password e classe per registrarsi!"); return; }
-            const res = await fetch('/api/register', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: u, password: p, classe: cl})
-            });
-            const data = await res.json();
-            if(data.status === 'success') { avviaSessioneAlunno(u, cl); } 
-            else { showLoginError(data.message); }
-        }
-
-        async function loginDocente() {
-            const u = document.getElementById('prof-user').value.trim();
-            const p = document.getElementById('prof-pass').value.trim();
-            const res = await fetch('/api/login', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: u, password: p})
-            });
-            const data = await res.json();
-            if(data.status === 'success' && data.ruolo === 'docente') {
-                utenteCorrente = u; ruoloCorrente = 'docente'; avviaDashboardDocente();
-            } else { showLoginError(data.message || "Credenziali errate docente."); }
-        }
-
-        function showLoginError(msg) { document.getElementById('login-error').textContent = msg; }
-
-        async function avviaSessioneAlunno(username, classe) {
-            utenteCorrente = username; ruoloCorrente = 'studente'; classeCorrente = classe; chatState = {};
-            document.getElementById('chat-box-content').innerHTML = "";
-            document.getElementById('chat-hud-quesito').textContent = "";
-            document.getElementById('chat-progressbar').style.width = "0%";
-            switchView('view-chat');
-            await inviaMessaggioFlusso("");
-        }
-
-        function handleChatEnter(e) { if(e.key === 'Enter') inviaMessaggioChat(); }
-
-        async function inviaMessaggioChat() {
-            const inp = document.getElementById('chat-input');
-            const btn = document.getElementById('btn-invia-chat');
-            const msg = inp.value.trim();
-            
-            if(!msg || inp.disabled) return;
-            
-            inp.disabled = true;
-            btn.disabled = true;
             inp.value = "";
-            
-            await appendBubble("studente", msg);
-            await inviaMessaggioFlusso(msg);
+            document.getElementById('rpg-dialog-text').innerHTML = `<b>Tu:</b> ${msg === 'ok' ? '<i>Avanzo...</i>' : msg}<br><br>`;
+            await inviaMessaggioAlBackendRPG(msg);
         }
 
-        async function inviaMessaggioFlusso(userMsg) {
-            const inp = document.getElementById('chat-input');
-            const btn = document.getElementById('btn-invia-chat');
-            
-            inp.disabled = true;
-            btn.disabled = true;
+        async function inviaMessaggioAlBackendRPG(userMsg) {
+            const inp = document.getElementById('rpg-input'); const btn = document.getElementById('btn-invia-rpg');
+            inp.disabled = true; btn.disabled = true;
 
             const res = await fetch('/api/chat_flow', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({username: utenteCorrente, message: userMsg, state: chatState})
             });
             const data = await res.json();
-            chatState = data.state;
-            
-            const hud = document.getElementById('chat-hud-quesito');
-            const progress = document.getElementById('chat-progressbar');
-            if(chatState.fase === 'allenamento' || chatState.fase === 'attesa_spiegazione' || chatState.fase === 'attesa_ok_prossimo') {
-                let num = chatState.quesito_numero || 1;
-                if(num > 10) num = 10;
-                hud.textContent = `Quesito ${num}/10`;
-                progress.style.width = `${(num / 10) * 100}%`;
-            } else {
-                hud.textContent = ""; progress.style.width = "0%";
-            }
+            chatState = data.state; 
 
-            for(let i=0; i<data.messages.length; i++) {
-                const m = data.messages[i];
-                await appendBubble(m.tipo, m.testo, m.immagine);
-            }
-            
-            inp.disabled = false;
-            btn.disabled = false;
-            inp.focus();
-        }
+            let stringaRisposta = "";
+            let azioneAnimazione = "pensieroso";
+            let dannoInflittoBoss = 0;
+            let dannoInflittoPlayer = 0;
 
-        async function appendBubble(tipo, testo, imgBase64=null) {
-            return new Promise((resolve) => {
-                const box = document.getElementById('chat-box-content');
-                const bubble = document.createElement('div');
-                bubble.className = `chat-bubble ${tipo}`;
-                
-                let prefix = "";
-                if(tipo === 'tutor') prefix = "🎓 ";
-                if(tipo === 'sistema') prefix = "💡 ";
-                if(tipo === 'studente') prefix = "✏️ ";
-
-                box.appendChild(bubble);
-
-                if (tipo === 'tutor' && typingSpeedMs > 0) {
-                    bubble.textContent = prefix;
-                    let i = 0;
+            data.messages.forEach(m => {
+                if (m.tipo === "tutor" || m.tipo === "sistema") {
+                    let testoPulito = m.testo;
                     
-                    function typeWriter() {
-                        if (i < testo.length) {
-                            bubble.textContent += testo.charAt(i);
-                            i++;
-                            box.scrollTop = box.scrollHeight;
-                            setTimeout(typeWriter, typingSpeedMs); 
-                        } else {
-                            if(imgBase64) {
-                                const img = document.createElement('img');
-                                img.className = "chat-img"; img.src = imgBase64;
-                                bubble.appendChild(img); box.scrollTop = box.scrollHeight;
-                            }
-                            resolve();
+                    if(testoPulito.includes("Scrivi 'ok'")) testoPulito = "<i>(Premi INVIO per continuare...)</i>";
+                    if(testoPulito === "Avvio Allenamento...") return;
+                    if(testoPulito.includes("Quesito") && testoPulito.includes("completato")) return;
+
+                    if (testoPulito.includes("CORRETTO! 🎉 Spiega come ci sei arrivato.") || testoPulito.includes("CORRETTO")) {
+                        azioneAnimazione = "super-felice";
+                        testoPulito = testoPulito.replace("🎉", ""); 
+                    }
+                    else if (testoPulito.includes("Ottima spiegazione")) {
+                        azioneAnimazione = "contento"; dannoInflittoBoss = 40;
+                        testoPulito = testoPulito.replace("💡", "");
+                        testoPulito += "<br><span style='color:#4CAF50;'><b>[ COLPO CRITICO! -40 PV ]</b></span>";
+                    } 
+                    else if (testoPulito.includes("Spiegazione buona")) {
+                        azioneAnimazione = "contento"; dannoInflittoBoss = 25;
+                        testoPulito = testoPulito.replace("👍", "");
+                        testoPulito += "<br><span style='color:#2196F3;'><b>[ BUON ATTACCO! -25 PV ]</b></span>";
+                    } 
+                    else if (testoPulito.includes("Accettabile")) {
+                        azioneAnimazione = "contento"; dannoInflittoBoss = 15;
+                        testoPulito = testoPulito.replace("⚠️", "");
+                        testoPulito += "<br><span style='color:#FFA726;'><b>[ COLPO DEBOLE... -15 PV ]</b></span>";
+                    }
+                    else if (testoPulito.includes("Non è corretto") || testoPulito.includes("Ancora non è corretto") || testoPulito.includes("esaurito i tentativi")) {
+                        azioneAnimazione = "triste"; dannoInflittoPlayer = 20;
+                        testoPulito += "<br><span style='color:#E53935;'><b>[ IL BOSS TI ATTACCA! -20 PV ]</b></span>";
+                    }
+                    
+                    testoPulito = testoPulito.replace("🤔", "").replace("🙂", "").replace("💪", "");
+
+                    // AGGIUNTA PROMEMORIA QUESITO
+                    let isReminderNeeded = testoPulito.includes("Spiega come ci sei") || 
+                                           testoPulito.includes("Non è corretto") || 
+                                           testoPulito.includes("Ancora non è corretto") || 
+                                           testoPulito.includes("Spiega meglio") ||
+                                           testoPulito.includes("Ecco la soluzione");
+                    
+                    if (isReminderNeeded) {
+                        let testoProblema = chatState.problema_corrente ? chatState.problema_corrente.testo : (chatState.assess_problema ? chatState.assess_problema.testo : "");
+                        if (testoProblema) {
+                            testoPulito += `<div style="margin-top:12px; background:#f3e5f5; padding:10px; border-left:4px solid #9c27b0; border-radius:4px; font-size:13.5px; color:#4a148c; line-height:1.4;"><b>[ Quesito in corso ]</b><br>${testoProblema}</div>`;
                         }
                     }
-                    typeWriter();
-                } else {
-                    bubble.textContent = prefix + testo;
-                    if(imgBase64) {
-                        const img = document.createElement('img');
-                        img.className = "chat-img"; img.src = imgBase64;
-                        bubble.appendChild(img);
-                    }
-                    box.scrollTop = box.scrollHeight;
-                    resolve();
+
+                    stringaRisposta += testoPulito + "<br><br>";
                 }
             });
-        }
 
-        async function avviaDashboardDocente() {
-            switchView('view-docente');
-            const res = await fetch('/api/teacher/dashboard');
-            const data = await res.json();
-            const listContainer = document.getElementById('teacher-studenti-list');
-            listContainer.innerHTML = "";
+            const player = document.getElementById('rpg-player-sprite');
+            const boss = document.getElementById('rpg-boss-sprite');
 
-            if(!data.studenti || data.studenti.length === 0) {
-                listContainer.innerHTML = `<div style="text-align:center;color:gray;padding:20px;">Nessun alunno registrato.</div>`;
-                return;
-            }
-            data.studenti.forEach(s => {
-                const row = document.createElement('div');
-                row.className = "student-row";
-                row.onclick = () => apriStoricoDateAlunno(s.username);
-                row.innerHTML = `
-                    <div class="student-info">
-                        <span class="student-name">👤 ${s.username.toUpperCase()}</span>
-                        <span class="student-meta">Classe ${s.classe}ª  |  Livello max: ${s.livello_massimo}/10  |  Quesiti totali: ${s.n_quesiti}</span>
-                    </div>
-                    <div style="color:var(--secondario); font-weight:bold;">Vedi Registro 📅</div>
-                `;
-                listContainer.appendChild(row);
-            });
-        }
-
-        async function apriStoricoDateAlunno(username) {
-            switchView('view-report-alunno');
-            document.getElementById('report-student-title').textContent = `📅 Sessioni di ${username.toUpperCase()}`;
-            const res = await fetch('/api/teacher/student_logs', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: username})
-            });
-            const data = await res.json();
-            const container = document.getElementById('report-sessioni-list');
-            container.innerHTML = "";
-            let dateSet = new Set();
-            let logs = data.log_sessione || [];
-            logs.forEach(l => { if(l.data) dateSet.add(l.data); });
-
-            if(dateSet.size === 0) {
-                container.innerHTML = `<div style="text-align:center;color:gray;padding:20px;">Nessuna sessione registrata.</div>`;
-                return;
-            }
-            dateSet.forEach(d => {
-                let qGg = logs.filter(l => l.data === d && l.tipo === 'QUESITO');
-                let corretti = qGg.filter(l => l.esito === 'CORRETTO').length;
-                let totSec = qGg.reduce((acc, current) => acc + (current.tempo_secondi || 0), 0);
-                let minuti = Math.floor(totSec / 60);
+            // GESTIONE ANIMAZIONI E CONGELAMENTO A FINE PARTITA
+            if (dannoInflittoBoss > 0) {
+                player.className = 'rpg-sprite sprite-player face-contento anim-attack';
+                setTimeout(() => { boss.className = 'rpg-sprite sprite-boss anim-hurt'; }, 250);
+                rpgBossHP = Math.max(0, rpgBossHP - dannoInflittoBoss);
+                aggiornaBarraHP('boss', rpgBossHP);
                 
-                const btn = document.createElement('div');
-                btn.className = "student-row";
-                btn.onclick = () => apriDettaglioGiornoLog(username, d, logs);
-                btn.innerHTML = `
-                    <div>📆 <b>Sessione del ${d}</b></div>
-                    <div class="student-meta">${qGg.length} quesiti  |  ✅ ${corretti}/${qGg.length} corretti  |  ⏱ ${minuti} min</div>
-                `;
-                container.appendChild(btn);
-            });
-        }
-
-        function apriDettaglioGiornoLog(username, dataScelta, tuttiILogs) {
-            switchView('view-log-giorno');
-            document.getElementById('log-giorno-title').textContent = `📊 ${username.toUpperCase()} – Registro del ${dataScelta}`;
-            document.getElementById('btn-back-to-sessions').onclick = () => apriStoricoDateAlunno(username);
-
-            let logsGg = tuttiILogs.filter(l => l.data === dataScelta);
-            let quesiti = logsGg.filter(l => l.tipo === 'QUESITO');
-            
-            let summaryText = "  RIEPILOGO GIORNALIERO\n";
-            if(quesiti.length > 0) {
-                let corretti = quesiti.filter(q => q.esito === 'CORRETTO').length;
-                let tasso = Math.round((corretti / quesiti.length) * 100);
-                let tempi = quesiti.map(q => q.tempo_secondi || 0);
-                let mediaT = (tempi.reduce((a,b)=>a+b, 0) / tempi.length).toFixed(1);
-                let punteggiSpiega = quesiti.filter(q => q.punteggio_spiegazione !== undefined).map(q => q.punteggio_spiegazione);
-                let mediaSpiega = punteggiSpiega.length > 0 ? Math.round(punteggiSpiega.reduce((a,b)=>a+b, 0) / punteggiSpiega.length) : 0;
+                setTimeout(() => { 
+                    if(rpgBossHP > 0) {
+                        boss.className = 'rpg-sprite sprite-boss anim-idle';
+                        player.className = 'rpg-sprite sprite-player face-pensieroso anim-idle';
+                    } else {
+                        boss.style.display = 'none'; 
+                        player.className = 'rpg-sprite sprite-player face-super-felice'; // CONGELATO SENZA FLOAT
+                    }
+                }, 1000);
+            } 
+            else if (dannoInflittoPlayer > 0) {
+                boss.className = 'rpg-sprite sprite-boss anim-boss-attack';
+                setTimeout(() => { player.className = 'rpg-sprite sprite-player face-triste anim-hurt'; }, 250);
+                rpgPlayerHP = Math.max(0, rpgPlayerHP - dannoInflittoPlayer);
+                aggiornaBarraHP('player', rpgPlayerHP);
                 
-                summaryText += `  Quesiti Affrontati: ${quesiti.length}  |  Corretti: ${corretti}/${quesiti.length}  |  Tasso Successo: ${tasso}%\n`;
-                summaryText += `  Tempo medio risposta: ${mediaT}s  |  Media Punteggio Spiegazioni: ${mediaSpiega}/100\n`;
-            }
-            summaryText += "=".repeat(65) + "\n\n";
-
-            let detailedText = "";
-            logsGg.forEach(entry => {
-                let tipo = entry.type || entry.tipo;
-                let ora = entry.ora || "";
-                if(tipo === 'ASSESSMENT') {
-                    detailedText += `🕒 [${ora}]  ── PRE-ASSESSMENT DIAGNOSTICO ──\n`;
-                    detailedText += `  Classe Alunno: ${entry.classe}\n  Domanda posta: ${entry.domanda}\n`;
-                    detailedText += `  Livello Assegnato Finale: ${entry.livello_assegnato || entry.livello_assigned}\n  Esito: ${entry.esito}  |  Tempo: ${entry.tempo_secondi}s\n`;
-                    if(entry.punteggio_spiegazione !== undefined) {
-                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\n`;
+                setTimeout(() => { 
+                    boss.className = 'rpg-sprite sprite-boss anim-idle';
+                    if(rpgPlayerHP > 0) {
+                        player.className = 'rpg-sprite sprite-player face-pensieroso anim-idle';
+                    } else {
+                        player.className = 'rpg-sprite sprite-player face-morto'; // CONGELATO SENZA FLOAT
                     }
-                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Tentativo ${i+1}: ${t}\n`; });
-                } else if(tipo === 'QUESITO') {
-                    let ico = entry.esito === 'CORRETTO' ? '✅' : '❌';
-                    detailedText += `🕒 [${ora}]  ── QUESITO NUMERO ${entry.numero_quesito || '?'} ${ico}\n`;
-                    detailedText += `  Difficoltà: ${entry.livello}  |  Classe: ${entry.classe}\n  Domanda posta: ${entry.domanda}\n  Tempo impiegato: ${entry.tempo_secondi}s\n`;
-                    if(entry.punteggio_spiegazione !== undefined) {
-                        detailedText += `  📝 Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? '⚠️ DA RIVEDERE' : '✅ VALIDA'}\n`;
-                    }
-                    (entry.tentativi || []).forEach((t, i) => { detailedText += `  Risposta data al tentativo ${i+1}: ${t}\n`; });
-                    if(entry.ragionamento) detailedText += `  💬 Argomentazione dell'alunno: "${entry.ragionamento}"\n`;
+                }, 1000);
+            } else {
+                if (rpgPlayerHP > 0 && rpgBossHP > 0) {
+                    player.className = 'rpg-sprite sprite-player face-' + azioneAnimazione + ' anim-idle';
                 }
-                detailedText += "-".repeat(50) + "\n\n";
-            });
-            document.getElementById('log-giorno-box').textContent = summaryText + detailedText;
-        }
+            }
 
-        async function apriEditorContenuti() {
-            switchView('view-editor');
-            switchEditorTab('q');
-            const res = await fetch('/api/teacher/get_content');
-            const data = await res.json();
-            poolProblemiGlobal = data.pool_problemi;
-            obiettiviGlobal = data.obiettivi;
-            document.getElementById('edit-obiettivi-text').value = obiettiviGlobal;
-            renderEditorListaQuesiti();
-        }
+            // SCRITTURA DEL DIALOGO E FINE GIOCO
+            let dialogBox = document.getElementById('rpg-dialog-text');
+            dialogBox.innerHTML += stringaRisposta;
+            if (stringaRisposta) leggiAdAlta(stringaRisposta);
 
-        function switchEditorTab(tab) {
-            document.getElementById('tab-editor-q').classList.remove('active');
-            document.getElementById('tab-editor-o').classList.remove('active');
-            document.getElementById('panel-editor-quesiti').style.display = "none";
-            document.getElementById('panel-editor-obiettivi').style.display = "none";
-
-            if(tab === 'q') {
-                document.getElementById('tab-editor-q').classList.add('active');
-                document.getElementById('panel-editor-quesiti').style.display = "flex";
+            if (rpgPlayerHP <= 0) {
+                dialogBox.innerHTML += "<br><b>[ GAME OVER: HAI PERSO TUTTI I PV. IL BOSS VINCE! ]</b>";
+            } else if (rpgBossHP <= 0) {
+                dialogBox.innerHTML += "<br><b>[ VITTORIA: HAI SCONFITTO IL MATH BOSS! ]</b>";
             } else {
-                document.getElementById('tab-editor-o').classList.add('active');
-                document.getElementById('panel-editor-obiettivi').style.display = "flex";
+                inp.disabled = false; btn.disabled = false; inp.focus();
+            }
+            
+            // Auto-scroll in cima per leggere sempre dall'inizio l'attacco
+            dialogBox.scrollTop = 0;
+        }
+
+        function aggiornaBarraHP(chi, hp) {
+            const bar = document.getElementById(`hp-bar-${chi}`);
+            const txt = document.getElementById(`hp-txt-${chi}`);
+            bar.style.width = hp + '%'; txt.textContent = hp + '/100';
+            if(hp < 30) bar.style.backgroundColor = '#f44336'; else if(hp < 60) bar.style.backgroundColor = '#ffeb3b'; else bar.style.backgroundColor = '#4CAF50'; 
+        }
+
+        // ==========================================
+        //  RESTO DEL CODICE
+        // ==========================================
+        function caricaUIPreferences() { const pFont = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif"; const pSize = localStorage.getItem('tutor_font_size') || "14"; const pSpeed = localStorage.getItem('tutor_typing_speed') || "20"; document.documentElement.style.setProperty('--font-family', pFont); document.documentElement.style.setProperty('--font-size-base', pSize + 'px'); document.getElementById('setting-font-family').value = pFont; document.getElementById('setting-font-size').value = pSize; document.getElementById('setting-font-size-val').textContent = pSize + 'px'; document.getElementById('setting-speed').value = pSpeed; typingSpeedMs = parseInt(pSpeed, 10); applicaAccessibilita(); }
+        function apriImpostazioni(prov) { vistaPrecedenteSettings = prov; document.getElementById('setting-font-family').value = localStorage.getItem('tutor_font_family') || "'Helvetica', Arial, sans-serif"; document.getElementById('setting-font-size').value = localStorage.getItem('tutor_font_size') || "14"; document.getElementById('setting-speed').value = localStorage.getItem('tutor_typing_speed') || "20"; const ttsOn = localStorage.getItem('tutor_tts') === 'true'; const sttOn = localStorage.getItem('tutor_stt') === 'true'; document.getElementById('setting-tts').checked = ttsOn; document.getElementById('setting-stt').checked = sttOn; document.getElementById('tts-options').style.display = ttsOn ? 'flex' : 'none'; document.getElementById('stt-note').style.display = sttOn ? 'block' : 'none'; const savedSpeed = localStorage.getItem('tutor_tts_speed') || '1.0'; document.getElementById('setting-tts-speed').value = savedSpeed; document.getElementById('setting-tts-speed-val').textContent = parseFloat(savedSpeed).toFixed(1) + 'x'; if (ttsOn && window.speechSynthesis) popolaVoci(); aggiornaAnteprimaSettings(); switchView('view-impostazioni'); }
+        function aggiornaAnteprimaSettings() { const fs = document.getElementById('setting-font-size').value; document.getElementById('setting-font-size-val').textContent = fs + 'px'; const pb = document.getElementById('settings-preview-box'); pb.style.fontFamily = document.getElementById('setting-font-family').value; pb.style.fontSize = fs + 'px'; }
+        function salvaEApplicaImpostazioni() { const f = document.getElementById('setting-font-family').value; const s = document.getElementById('setting-font-size').value; const sp = document.getElementById('setting-speed').value; localStorage.setItem('tutor_font_family', f); localStorage.setItem('tutor_font_size', s); localStorage.setItem('tutor_typing_speed', sp); document.documentElement.style.setProperty('--font-family', f); document.documentElement.style.setProperty('--font-size-base', s + 'px'); typingSpeedMs = parseInt(sp, 10); localStorage.setItem('tutor_tts', document.getElementById('setting-tts').checked); localStorage.setItem('tutor_tts_speed', document.getElementById('setting-tts-speed').value); const selVoice = document.getElementById('setting-tts-voice'); if (selVoice) localStorage.setItem('tutor_tts_voice', selVoice.value); localStorage.setItem('tutor_stt', document.getElementById('setting-stt').checked); applicaAccessibilita(); alert("Impostazioni applicate!"); switchView(vistaPrecedenteSettings); }
+        function chiudiImpostazioni() { switchView(vistaPrecedenteSettings); }
+        function switchView(viewId) { document.querySelectorAll('.container').forEach(c => c.classList.remove('active')); document.getElementById(viewId).classList.add('active'); }
+        function switchLoginTab(tab) { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active')); if(tab === 'alunni') { document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('panel-alunni').classList.add('active'); } else { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('panel-docenti').classList.add('active'); } }
+        function tornaHome() { utenteCorrente = ""; ruoloCorrente = ""; chatState = {}; svuotaTTS(); document.getElementById('stud-user').value = ""; document.getElementById('stud-pass').value = ""; document.getElementById('prof-user').value = ""; document.getElementById('prof-pass').value = ""; document.getElementById('login-error').textContent = ""; switchView('view-login'); }
+        async function loginAlunno() { const u = document.getElementById('stud-user').value.trim(); const p = document.getElementById('stud-pass').value.trim(); if(!u || !p) { showLoginError("Compila tutti i campi!"); return; } const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) }); const data = await res.json(); if(data.status === 'success' && data.ruolo === 'studente') { avviaSessioneAlunno(u, data.classe); } else { showLoginError(data.message || "Credenziali errate."); } }
+        async function registraAlunno() { const u = document.getElementById('stud-user').value.trim(); const p = document.getElementById('stud-pass').value.trim(); const cl = document.getElementById('stud-classe').value; if(!u || !p || !cl) { showLoginError("Campi mancanti!"); return; } const res = await fetch('/api/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p, classe: cl}) }); const data = await res.json(); if(data.status === 'success') { avviaSessioneAlunno(u, cl); } else { showLoginError(data.message); } }
+        async function loginDocente() { const u = document.getElementById('prof-user').value.trim(); const p = document.getElementById('prof-pass').value.trim(); const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) }); const data = await res.json(); if(data.status === 'success' && data.ruolo === 'docente') { utenteCorrente = u; ruoloCorrente = 'docente'; avviaDashboardDocente(); } else { showLoginError(data.message || "Errore."); } }
+        function showLoginError(msg) { document.getElementById('login-error').textContent = msg; }
+        async function avviaSessioneAlunno(username, classe) { utenteCorrente = username; ruoloCorrente = 'studente'; classeCorrente = classe; chatState = {}; document.getElementById('chat-box-content').innerHTML = ""; document.getElementById('chat-hud-quesito').textContent = ""; document.getElementById('chat-progressbar').style.width = "0%"; switchView('view-chat'); await inviaMessaggioFlusso(""); }
+        function handleChatEnter(e) { if(e.key === 'Enter') inviaMessaggioChat(); }
+        async function inviaMessaggioChat() { const inp = document.getElementById('chat-input'); const btn = document.getElementById('btn-invia-chat'); const msg = inp.value.trim(); if(!msg || inp.disabled) return; inp.disabled = true; btn.disabled = true; inp.value = ""; await appendBubble("studente", msg); await inviaMessaggioFlusso(msg); }
+        async function inviaMessaggioFlusso(userMsg) { const inp = document.getElementById('chat-input'); const btn = document.getElementById('btn-invia-chat'); inp.disabled = true; btn.disabled = true; const res = await fetch('/api/chat_flow', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: utenteCorrente, message: userMsg, state: chatState}) }); const data = await res.json(); chatState = data.state; const hud = document.getElementById('chat-hud-quesito'); const progress = document.getElementById('chat-progressbar'); if(chatState.fase === 'allenamento' || chatState.fase === 'attesa_spiegazione' || chatState.fase === 'attesa_ok_prossimo') { let num = chatState.quesito_numero || 1; if(num > 10) num = 10; hud.textContent = `Quesito ${num}/10`; progress.style.width = `${(num / 10) * 100}%`; } else { hud.textContent = ""; progress.style.width = "0%"; } for(let i=0; i<data.messages.length; i++) { const m = data.messages[i]; await appendBubble(m.tipo, m.testo, m.immagine); } inp.disabled = false; btn.disabled = false; inp.focus(); }
+        async function appendBubble(tipo, testo, imgBase64=null) { return new Promise((resolve) => { const box = document.getElementById('chat-box-content'); const bubble = document.createElement('div'); bubble.className = `chat-bubble ${tipo}`; let prefix = ""; if(tipo === 'tutor') prefix = "Tutor: "; if(tipo === 'sistema') prefix = "Sistema: "; if(tipo === 'studente') prefix = "Tu: "; box.appendChild(bubble); if (tipo === 'tutor') leggiAdAlta(testo); if (tipo === 'tutor' && typingSpeedMs > 0) { bubble.textContent = prefix; let i = 0; function typeWriter() { if (i < testo.length) { bubble.textContent += testo.charAt(i); i++; box.scrollTop = box.scrollHeight; setTimeout(typeWriter, typingSpeedMs); } else { if(imgBase64) { const img = document.createElement('img'); img.className = "chat-img"; img.src = imgBase64; bubble.appendChild(img); box.scrollTop = box.scrollHeight; } resolve(); } } typeWriter(); } else { bubble.textContent = prefix + testo; if(imgBase64) { const img = document.createElement('img'); img.className = "chat-img"; img.src = imgBase64; bubble.appendChild(img); } box.scrollTop = box.scrollHeight; resolve(); } }); }
+        async function avviaDashboardDocente() { switchView('view-docente'); const res = await fetch('/api/teacher/dashboard'); const data = await res.json(); const listContainer = document.getElementById('teacher-studenti-list'); listContainer.innerHTML = ""; if(!data.studenti || data.studenti.length === 0) { listContainer.innerHTML = `<div style="text-align:center;color:gray;padding:20px;">Nessun alunno.</div>`; return; } data.studenti.forEach(s => { const row = document.createElement('div'); row.className = "student-row"; row.onclick = () => apriStoricoDateAlunno(s.username); row.innerHTML = `<div class="student-info"><span class="student-name">${s.username.toUpperCase()}</span><span class="student-meta">Classe ${s.classe}ª | Liv. max: ${s.livello_massimo}/10 | Quesiti: ${s.n_quesiti}</span></div><div style="color:var(--secondario); font-weight:bold;">Registro</div>`; listContainer.appendChild(row); }); }
+        async function apriStoricoDateAlunno(username) { switchView('view-report-alunno'); document.getElementById('report-student-title').textContent = `Sessioni di ${username.toUpperCase()}`; const res = await fetch('/api/teacher/student_logs', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: username}) }); const data = await res.json(); const container = document.getElementById('report-sessioni-list'); container.innerHTML = ""; let dateSet = new Set(); let logs = data.log_sessione || []; logs.forEach(l => { if(l.data) dateSet.add(l.data); }); if(dateSet.size === 0) { container.innerHTML = `<div style="text-align:center;color:gray;padding:20px;">Nessuna sessione.</div>`; return; } dateSet.forEach(d => { let qGg = logs.filter(l => l.data === d && l.tipo === 'QUESITO'); let corretti = qGg.filter(l => l.esito === 'CORRETTO').length; let totSec = qGg.reduce((acc, current) => acc + (current.tempo_secondi || 0), 0); let minuti = Math.floor(totSec / 60); const btn = document.createElement('div'); btn.className = "student-row"; btn.onclick = () => apriDettaglioGiornoLog(username, d, logs); btn.innerHTML = `<div><b>Sessione del ${d}</b></div><div class="student-meta">${qGg.length} quesiti | ${corretti}/${qGg.length} corretti | ${minuti} min</div>`; container.appendChild(btn); }); }
+        function apriDettaglioGiornoLog(username, dataScelta, tuttiILogs) { switchView('view-log-giorno'); document.getElementById('log-giorno-title').textContent = `${username.toUpperCase()} – Registro del ${dataScelta}`; document.getElementById('btn-back-to-sessions').onclick = () => apriStoricoDateAlunno(username); let logsGg = tuttiILogs.filter(l => l.data === dataScelta); let quesiti = logsGg.filter(l => l.tipo === 'QUESITO'); let summaryText = "  RIEPILOGO GIORNALIERO\n"; if(quesiti.length > 0) { let corretti = quesiti.filter(q => q.esito === 'CORRETTO').length; let tasso = Math.round((corretti / quesiti.length) * 100); let tempi = quesiti.map(q => q.tempo_secondi || 0); let mediaT = (tempi.reduce((a,b)=>a+b, 0) / tempi.length).toFixed(1); let punteggiSpiega = quesiti.filter(q => q.punteggio_spiegazione !== undefined).map(q => q.punteggio_spiegazione); let mediaSpiega = punteggiSpiega.length > 0 ? Math.round(punteggiSpiega.reduce((a,b)=>a+b, 0) / punteggiSpiega.length) : 0; summaryText += `  Quesiti Affrontati: ${quesiti.length} | Corretti: ${corretti}/${quesiti.length} | Tasso Successo: ${tasso}%\n  Tempo medio risposta: ${mediaT}s | Media Punteggio Spiegazioni: ${mediaSpiega}/100\n`; } summaryText += "=".repeat(65) + "\n\n"; let detailedText = ""; logsGg.forEach(entry => { let tipo = entry.type || entry.tipo; let ora = entry.ora || ""; if(tipo === 'ASSESSMENT') { detailedText += `[${ora}] ── PRE-ASSESSMENT DIAGNOSTICO ──\n  Classe Alunno: ${entry.classe}\n  Domanda posta: ${entry.domanda}\n  Livello Assegnato Finale: ${entry.livello_assegnato || entry.livello_assigned}\n  Esito: ${entry.esito} | Tempo: ${entry.tempo_secondi}s\n`; if(entry.punteggio_spiegazione !== undefined) { detailedText += `  Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? 'DA RIVEDERE' : 'VALIDA'}\n`; } (entry.tentativi || []).forEach((t, i) => { detailedText += `  Tentativo ${i+1}: ${t}\n`; }); } else if(tipo === 'QUESITO') { let ico = entry.esito === 'CORRETTO' ? '[OK]' : '[ERRATO]'; detailedText += `[${ora}] ── QUESITO NUMERO ${entry.numero_quesito || '?'} ${ico}\n  Difficoltà: ${entry.livello} | Classe: ${entry.classe}\n  Domanda: ${entry.domanda}\n  Tempo: ${entry.tempo_secondi}s\n`; if(entry.punteggio_spiegazione !== undefined) { detailedText += `  Punteggio Spiegazione: ${entry.punteggio_spiegazione}/100 ${entry.da_rivedere ? 'DA RIVEDERE' : 'VALIDA'}\n`; } (entry.tentativi || []).forEach((t, i) => { detailedText += `  Risposta data al tentativo ${i+1}: ${t}\n`; }); if(entry.ragionamento) detailedText += `  Argomentazione: "${entry.ragionamento}"\n`; } detailedText += "-".repeat(50) + "\n\n"; }); document.getElementById('log-giorno-box').textContent = summaryText + detailedText; }
+        async function apriEditorContenuti() { switchView('view-editor'); switchEditorTab('q'); const res = await fetch('/api/teacher/get_content'); const data = await res.json(); poolProblemiGlobal = data.pool_problemi; obiettiviGlobal = data.obiettivi; document.getElementById('edit-obiettivi-text').value = obiettiviGlobal; renderEditorListaQuesiti(); }
+        function switchEditorTab(tab) { document.getElementById('tab-editor-q').classList.remove('active'); document.getElementById('tab-editor-o').classList.remove('active'); document.getElementById('panel-editor-quesiti').style.display = "none"; document.getElementById('panel-editor-obiettivi').style.display = "none"; if(tab === 'q') { document.getElementById('tab-editor-q').classList.add('active'); document.getElementById('panel-editor-quesiti').style.display = "flex"; } else { document.getElementById('tab-editor-o').classList.add('active'); document.getElementById('panel-editor-obiettivi').style.display = "flex"; } }
+        function renderEditorListaQuesiti() { const cl = document.getElementById('edit-filter-classe').value; const lv = document.getElementById('edit-filter-livello').value; const container = document.getElementById('edit-lista-quesiti-container'); container.innerHTML = ""; const classeKey = `classe_${cl}`; const quesiti = (poolProblemiGlobal[classeKey] && poolProblemiGlobal[classeKey][lv]) ? poolProblemiGlobal[classeKey][lv] : []; if(quesiti.length === 0) { container.innerHTML = `<div style="font-size:12px;color:gray;text-align:center;padding:10px;">Vuoto</div>`; resetEditorForm(); return; } quesiti.forEach((q, i) => { const btn = document.createElement('button'); btn.className = `q-item-btn ${quesitoIndexCorrente === i ? 'active' : ''}`; btn.textContent = `${i+1}. ${q.testo || ''}`; btn.onclick = () => caricaQuesitoInForm(i); container.appendChild(btn); }); if(quesitoIndexCorrente === null || quesitoIndexCorrente >= quesiti.length) { caricaQuesitoInForm(0); } }
+        function resetEditorForm() { quesitoIndexCorrente = null; document.getElementById('edit-q-testo').value = ""; document.getElementById('edit-q-imgurl').value = ""; document.getElementById('edit-q-risposta').value = ""; document.getElementById('edit-q-indizio1').value = ""; document.getElementById('edit-q-indizio2').value = ""; document.getElementById('edit-q-soluzione').value = ""; document.getElementById('edit-q-imgpreview').innerHTML = "Nessuna immagine"; immagineBase64Corrente = null; }
+        function caricaQuesitoInForm(index) { const cl = document.getElementById('edit-filter-classe').value; const lv = document.getElementById('edit-filter-livello').value; const classeKey = `classe_${cl}`; const q = poolProblemiGlobal[classeKey][lv][index]; if(!q) return; quesitoIndexCorrente = index; document.querySelectorAll('.q-item-btn').forEach((b, i) => { if(i === index) b.classList.add('active'); else b.classList.remove('active'); }); document.getElementById('edit-q-testo').value = q.testo || ""; document.getElementById('edit-q-imgurl').value = q.immagine_url || q.immagine || ""; document.getElementById('edit-q-risposta').value = q.risposta || ""; document.getElementById('edit-q-indizio1').value = q.indizio_1 || ""; document.getElementById('edit-q-indizio2').value = q.indizio_2 || ""; document.getElementById('edit-q-soluzione').value = q.soluzione || ""; const preview = document.getElementById('edit-q-imgpreview'); if(q.immagine) { immagineBase64Corrente = q.immagine; preview.innerHTML = `<img src="${q.immagine}">`; } else { immagineBase64Corrente = null; preview.innerHTML = "Nessuna immagine presente"; } }
+        function handleFileCaricamento(event) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { immagineBase64Corrente = e.target.result; document.getElementById('edit-q-imgpreview').innerHTML = `<img src="${immagineBase64Corrente}">`; document.getElementById('edit-q-imgurl').value = `[File: ${file.name}]`; }; reader.readAsDataURL(file); }
+        function aggiungiNuovoQuesitoInPool() { const cl = document.getElementById('edit-filter-classe').value; const lv = document.getElementById('edit-filter-livello').value; const classeKey = `classe_${cl}`; if(!poolProblemiGlobal[classeKey]) poolProblemiGlobal[classeKey] = {}; if(!poolProblemiGlobal[classeKey][lv]) poolProblemiGlobal[classeKey][lv] = []; const nuovo = { testo: "Nuovo problema", risposta: "", indizio_1: "", indizio_2: "", soluzione: "" }; poolProblemiGlobal[classeKey][lv].push(nuovo); quesitoIndexCorrente = poolProblemiGlobal[classeKey][lv].length - 1; renderEditorListaQuesiti(); caricaQuesitoInForm(quesitoIndexCorrente); }
+        function salvaQuesitoCorrenteInMemoria() { if(quesitoIndexCorrente === null) return; const cl = document.getElementById('edit-filter-classe').value; const lv = document.getElementById('edit-filter-livello').value; const classeKey = `classe_${cl}`; const q = poolProblemiGlobal[classeKey][lv][quesitoIndexCorrente]; q.testo = document.getElementById('edit-q-testo').value.trim(); q.risposta = document.getElementById('edit-q-risposta').value.trim(); q.indizio_1 = document.getElementById('edit-q-indizio1').value.trim(); q.indizio_2 = document.getElementById('edit-q-indizio2').value.trim(); q.soluzione = document.getElementById('edit-q-soluzione').value.trim(); let urlVal = document.getElementById('edit-q-imgurl').value.trim(); if(urlVal.startsWith('http')) { q.immagine_url = urlVal; q.immagine = urlVal; } else if(immagineBase64Corrente) { q.immagine = immagineBase64Corrente; } else { delete q.immagine; delete q.immagine_url; } alert("Salvato in memoria! Premi 'SALVA TUTTO SUL SERVER' per applicare."); renderEditorListaQuesiti(); }
+        function eliminaQuesitoCorrenteInMemoria() { if(quesitoIndexCorrente === null) return; if(!confirm("Eliminare?")) return; const cl = document.getElementById('edit-filter-classe').value; const lv = document.getElementById('edit-filter-livello').value; const classeKey = `classe_${cl}`; poolProblemiGlobal[classeKey][lv].splice(quesitoIndexCorrente, 1); quesitoIndexCorrente = null; renderEditorListaQuesiti(); }
+        async function salvaTuttiIContenutiSulServer() { const obiettiviVal = document.getElementById('edit-obiettivi-text').value; const res = await fetch('/api/teacher/save_content', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({pool_problemi: poolProblemiGlobal, obiettivi: obiettiviVal}) }); const data = await res.json(); if(data.status === 'success') { alert("Contenuti archiviati online con successo!"); } else { alert("Errore durante il salvataggio."); } }
+        function toggleImportaBlocco() {
+            const p = document.getElementById('panel-import-bulk');
+            const isVisible = p.style.display === 'flex';
+            p.style.display = isVisible ? 'none' : 'flex';
+            if (!isVisible) {
+                document.getElementById('bulk-import-textarea').value = '';
+                document.getElementById('bulk-import-feedback').textContent = '';
             }
         }
 
-        function renderEditorListaQuesiti() {
-            const cl = document.getElementById('edit-filter-classe').value;
-            const lv = document.getElementById('edit-filter-livello').value;
-            const container = document.getElementById('edit-lista-quesiti-container');
-            container.innerHTML = "";
-            const classeKey = `classe_${cl}`;
-            const quesiti = (poolProblemiGlobal[classeKey] && poolProblemiGlobal[classeKey][lv]) ? poolProblemiGlobal[classeKey][lv] : [];
+        function parseEImportaBlocco() {
+            const raw = document.getElementById('bulk-import-textarea').value;
+            const fb  = document.getElementById('bulk-import-feedback');
 
-            if(quesiti.length === 0) {
-                container.innerHTML = `<div style="font-size:12px;color:gray;text-align:center;padding:10px;">Vuoto</div>`;
-                resetEditorForm();
+            const blocchi = raw.split(/\n\s*---\s*\n/).map(b => b.trim()).filter(b => b.length > 0);
+
+            if (blocchi.length === 0) {
+                fb.style.color = '#c62828';
+                fb.textContent = 'Nessun blocco trovato. Usa --- per separare i quesiti.';
                 return;
             }
-            quesiti.forEach((q, i) => {
-                const btn = document.createElement('button');
-                btn.className = `q-item-btn ${quesitoIndexCorrente === i ? 'active' : ''}`;
-                btn.textContent = `${i+1}. ${q.testo || ''}`;
-                btn.onclick = () => caricaQuesitoInForm(i);
-                container.appendChild(btn);
+
+            const campiQuesito = { Q: 'testo', R: 'risposta', I1: 'indizio_1', I2: 'indizio_2', S: 'soluzione' };
+            const livelloValidi = ['assessment', 'facile', 'medio', 'difficile'];
+            const classeValide  = ['1','2','3','4','5'];
+            const regexRiga = /^(CLASSE|LIVELLO|Q|R|I1|I2|S):\s*(.+)$/i;
+
+            let importati = 0; let scartati = 0; let errori = [];
+            let riepilogo = {};
+
+            blocchi.forEach((blocco, idx) => {
+                const righe   = blocco.split('\n');
+                const quesito = { testo: '', risposta: '', indizio_1: '', indizio_2: '', soluzione: '' };
+                let cl = null; let lv = null; let hasQ = false;
+
+                righe.forEach(riga => {
+                    const match = riga.trim().match(regexRiga);
+                    if (!match) return;
+                    const chiave = match[1].toUpperCase();
+                    const valore = match[2].trim();
+                    if (chiave === 'CLASSE') {
+                        cl = classeValide.includes(valore) ? valore : null;
+                    } else if (chiave === 'LIVELLO') {
+                        lv = livelloValidi.includes(valore.toLowerCase()) ? valore.toLowerCase() : null;
+                    } else {
+                        const campo = campiQuesito[chiave];
+                        if (campo) { quesito[campo] = valore; }
+                        if (chiave === 'Q') hasQ = true;
+                    }
+                });
+
+                // Blocco non valido: segnala il motivo
+                if (!cl || !lv || !hasQ) {
+                    scartati++;
+                    let motivi = [];
+                    if (!cl) motivi.push('CLASSE mancante o non valida (1-5)');
+                    if (!lv) motivi.push('LIVELLO mancante o non valido (assessment/facile/medio/difficile)');
+                    if (!hasQ) motivi.push('Q: mancante');
+                    errori.push(`Blocco ${idx + 1}: ${motivi.join(', ')}`);
+                    return;
+                }
+
+                const key = `classe_${cl}`;
+                if (!poolProblemiGlobal[key])     poolProblemiGlobal[key]     = {};
+                if (!poolProblemiGlobal[key][lv]) poolProblemiGlobal[key][lv] = [];
+                poolProblemiGlobal[key][lv].push(quesito);
+                importati++;
+
+                const dest = `Classe ${cl}ª – ${lv}`;
+                riepilogo[dest] = (riepilogo[dest] || 0) + 1;
             });
-            if(quesitoIndexCorrente === null || quesitoIndexCorrente >= quesiti.length) { caricaQuesitoInForm(0); }
-        }
 
-        function resetEditorForm() {
-            quesitoIndexCorrente = null;
-            document.getElementById('edit-q-testo').value = ""; document.getElementById('edit-q-imgurl').value = "";
-            document.getElementById('edit-q-risposta').value = ""; document.getElementById('edit-q-indizio1').value = "";
-            document.getElementById('edit-q-indizio2').value = ""; document.getElementById('edit-q-soluzione').value = "";
-            document.getElementById('edit-q-imgpreview').innerHTML = "Nessuna immagine";
-            immagineBase64Corrente = null;
-        }
-
-        function caricaQuesitoInForm(index) {
-            const cl = document.getElementById('edit-filter-classe').value;
-            const lv = document.getElementById('edit-filter-livello').value;
-            const classeKey = `classe_${cl}`;
-            const q = poolProblemiGlobal[classeKey][lv][index];
-            if(!q) return;
-
-            quesitoIndexCorrente = index;
-            document.querySelectorAll('.q-item-btn').forEach((b, i) => {
-                if(i === index) b.classList.add('active'); else b.classList.remove('active');
-            });
-            document.getElementById('edit-q-testo').value = q.testo || ""; document.getElementById('edit-q-imgurl').value = q.immagine_url || q.immagine || "";
-            document.getElementById('edit-q-risposta').value = q.risposta || ""; document.getElementById('edit-q-indizio1').value = q.indizio_1 || "";
-            document.getElementById('edit-q-indizio2').value = q.indizio_2 || ""; document.getElementById('edit-q-soluzione').value = q.soluzione || "";
-
-            const preview = document.getElementById('edit-q-imgpreview');
-            if(q.immagine) {
-                immagineBase64Corrente = q.immagine; preview.innerHTML = `<img src="${q.immagine}">`;
+            if (importati > 0) {
+                fb.style.color = '#2e7d32';
+                const dettaglio = Object.entries(riepilogo).map(([k,v]) => `${v} in ${k}`).join(', ');
+                fb.innerHTML = `✅ ${importati} quesito/i importato/i: ${dettaglio}.`
+                    + (errori.length > 0 ? `<br><span style="color:#c62828;">⚠️ ${errori.join(' | ')}</span>` : '');
+                const primaClasse = Object.keys(riepilogo)[0];
+                const matchCl = primaClasse.match(/Classe (\d)/);
+                const matchLv = primaClasse.match(/– (\w+)/);
+                if (matchCl) document.getElementById('edit-filter-classe').value = matchCl[1];
+                if (matchLv) document.getElementById('edit-filter-livello').value = matchLv[1];
+                quesitoIndexCorrente = null;
+                renderEditorListaQuesiti();
+                document.getElementById('bulk-import-textarea').value = '';
             } else {
-                immagineBase64Corrente = null; preview.innerHTML = "Nessuna immagine presente";
+                fb.style.color = '#c62828';
+                fb.innerHTML = `❌ Nessun quesito valido.<br>` + errori.map(e => `• ${e}`).join('<br>');
             }
         }
 
-        function handleFileCaricamento(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                immagineBase64Corrente = e.target.result;
-                document.getElementById('edit-q-imgpreview').innerHTML = `<img src="${immagineBase64Corrente}">`;
-                document.getElementById('edit-q-imgurl').value = `[File: ${file.name}]`;
-            };
-            reader.readAsDataURL(file);
-        }
+        // ==========================================
+        //  ACCESSIBILITÀ – TTS & STT
+        // ==========================================
+        let ttsEnabled  = false;
+        let sttEnabled  = false;
+        let ttsSpeed    = 1.0;
+        let ttsQueue    = [];       // coda messaggi da leggere
+        let ttsSpeaking = false;    // è in corso una lettura?
 
-        function aggiungiNuovoQuesitoInPool() {
-            const cl = document.getElementById('edit-filter-classe').value;
-            const lv = document.getElementById('edit-filter-livello').value;
-            const classeKey = `classe_${cl}`;
-            if(!poolProblemiGlobal[classeKey]) poolProblemiGlobal[classeKey] = {};
-            if(!poolProblemiGlobal[classeKey][lv]) poolProblemiGlobal[classeKey][lv] = [];
+        let sttRiconoscimento = null;
+        let sttAttivo  = false;
+        let sttInputId = null;
+        let sttBtnId   = null;
 
-            const nuovo = { testo: "Nuovo problema da compilare", risposta: "", indizio_1: "", indizio_2: "", soluzione: "" };
-            poolProblemiGlobal[classeKey][lv].push(nuovo);
-            quesitoIndexCorrente = poolProblemiGlobal[classeKey][lv].length - 1;
-            renderEditorListaQuesiti();
-            caricaQuesitoInForm(quesitoIndexCorrente);
-        }
-
-        function salvaQuesitoCorrenteInMemoria() {
-            if(quesitoIndexCorrente === null) return;
-            const cl = document.getElementById('edit-filter-classe').value;
-            const lv = document.getElementById('edit-filter-livello').value;
-            const classeKey = `classe_${cl}`;
-            const q = poolProblemiGlobal[classeKey][lv][quesitoIndexCorrente];
-            q.testo = document.getElementById('edit-q-testo').value.trim(); q.risposta = document.getElementById('edit-q-risposta').value.trim();
-            q.indizio_1 = document.getElementById('edit-q-indizio1').value.trim(); q.indizio_2 = document.getElementById('edit-q-indizio2').value.trim();
-            q.soluzione = document.getElementById('edit-q-soluzione').value.trim();
-            
-            let urlVal = document.getElementById('edit-q-imgurl').value.trim();
-            if(urlVal.startsWith('http')) { q.immagine_url = urlVal; q.immagine = urlVal; } 
-            else if(immagineBase64Corrente) { q.immagine = immagineBase64Corrente; } 
-            else { delete q.immagine; delete q.immagine_url; }
-
-            alert("Quesito aggiornato in memoria! Ricordati di premere 'SALVA TUTTO SUL SERVER' per applicare stabilmente.");
-            renderEditorListaQuesiti();
-        }
-
-        function eliminaQuesitoCorrenteInMemoria() {
-            if(quesitoIndexCorrente === null) return;
-            if(!confirm("Vuoi davvero eliminare questo quesito dalla memoria temporanea?")) return;
-            const cl = document.getElementById('edit-filter-classe').value;
-            const lv = document.getElementById('edit-filter-livello').value;
-            const classeKey = `classe_${cl}`;
-            poolProblemiGlobal[classeKey][lv].splice(quesitoIndexCorrente, 1);
-            quesitoIndexCorrente = null;
-            renderEditorListaQuesiti();
-        }
-
-        async function salvaTuttiIContenutiSulServer() {
-            const obiettiviVal = document.getElementById('edit-obiettivi-text').value;
-            const res = await fetch('/api/teacher/save_content', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({pool_problemi: poolProblemiGlobal, obiettivi: obiettiviVal})
+        // ── VOCI ─────────────────────────────────
+        function popolaVoci() {
+            const sel = document.getElementById('setting-tts-voice');
+            if (!sel) return;
+            sel.innerHTML = '';
+            const tutte = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+            // Solo voci locali (localService:true) → quelle cloud non funzionano
+            const locali = tutte.filter(v => v.localService);
+            const vociIT = locali.filter(v => v.lang.startsWith('it'));
+            // Se non ci sono voci IT locali, mostra tutte le locali
+            const lista  = vociIT.length > 0 ? vociIT : locali;
+            if (lista.length === 0) {
+                const opt = document.createElement('option');
+                opt.textContent = 'Nessuna voce locale disponibile';
+                sel.appendChild(opt);
+                return;
+            }
+            lista.forEach((v, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = `${v.name} (${v.lang})`;
+                sel.appendChild(opt);
             });
-            const data = await res.json();
-            if(data.status === 'success') { alert("🎉 Contenuti archiviati e messi online con successo nel file JSON del server!"); } 
-            else { alert("Errore durante il salvataggio sul server."); }
+            const saved = localStorage.getItem('tutor_tts_voice');
+            if (saved !== null) sel.value = saved;
         }
 
-        window.addEventListener('DOMContentLoaded', caricaUIPreferences);
+        function getVoceSelezionata(selId) {
+            const sel    = document.getElementById(selId);
+            const tutte  = window.speechSynthesis.getVoices();
+            const locali = tutte.filter(v => v.localService);
+            const vociIT = locali.filter(v => v.lang.startsWith('it'));
+            const lista  = vociIT.length > 0 ? vociIT : locali;
+            return (sel && lista[parseInt(sel.value)]) ? lista[parseInt(sel.value)] : null;
+        }
+
+        // ── TOGGLE PANNELLO IMPOSTAZIONI ─────────
+        function toggleTTSOptions() {
+            const on = document.getElementById('setting-tts').checked;
+            document.getElementById('tts-options').style.display = on ? 'flex' : 'none';
+            if (on && window.speechSynthesis) popolaVoci();
+        }
+        function toggleSTTNote() {
+            const on = document.getElementById('setting-stt').checked;
+            document.getElementById('stt-note').style.display = on ? 'block' : 'none';
+        }
+
+        // ── TTS: ANTEPRIMA (funziona sempre, ignora ttsEnabled) ──
+        function testTTS() {
+            if (!window.speechSynthesis) { alert("Il tuo browser non supporta il Text-to-Speech."); return; }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance("Ciao! Questa è la voce del tutor di matematica. Come suona?");
+            utterance.lang  = 'it-IT';
+            utterance.rate  = parseFloat(document.getElementById('setting-tts-speed').value) || 1.0;
+            const v = getVoceSelezionata('setting-tts-voice');
+            if (v) utterance.voice = v;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // ── TTS: CODA – aggiunge e parte se libero ───────────────
+        function leggiAdAlta(testo) {
+            if (!ttsEnabled || !window.speechSynthesis) return;
+            const pulito = testo
+                .replace(/<[^>]+>/g, ' ')           // rimuovi tag HTML
+                .replace(/\[.*?\]/g, ' ')            // rimuovi testi tra [ ]
+                .replace(/[^\w\s\.\,\!\?\;\:\-\'àèéìòùÀÈÉÌÒÙ]/g, ' ')
+                .replace(/\s+/g, ' ').trim();
+            if (!pulito || pulito.length < 2) return;
+            ttsQueue.push(pulito);
+            if (!ttsSpeaking) _processaTTSQueue();
+        }
+
+        function _processaTTSQueue() {
+            if (ttsQueue.length === 0) { ttsSpeaking = false; return; }
+            ttsSpeaking = true;
+            const testo = ttsQueue.shift();
+            const utterance = new SpeechSynthesisUtterance(testo);
+            utterance.lang  = 'it-IT';
+            utterance.rate  = ttsSpeed;
+            const v = getVoceSelezionata('setting-tts-voice');
+            if (v) utterance.voice = v;
+            utterance.onend   = () => _processaTTSQueue();
+            utterance.onerror = () => _processaTTSQueue(); // in caso di errore vai avanti
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function svuotaTTS() {
+            ttsQueue = [];
+            ttsSpeaking = false;
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+        }
+
+        // ── STT: MICROFONO ────────────────────────
+        function avviaMicrofono(inputId, btnId) {
+            if (!sttEnabled) return;
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) { alert("Riconoscimento vocale non supportato. Usa Chrome o Edge."); return; }
+
+            const btn = document.getElementById(btnId);
+
+            // Se già in ascolto su questo campo → ferma
+            if (sttAttivo && sttInputId === inputId) {
+                if (sttRiconoscimento) { try { sttRiconoscimento.stop(); } catch(e) {} }
+                return;
+            }
+
+            // Ferma eventuale ascolto su altro campo
+            if (sttRiconoscimento) { try { sttRiconoscimento.abort(); } catch(e) {} }
+
+            sttInputId = inputId;
+            sttBtnId   = btnId;
+
+            try {
+                sttRiconoscimento = new SR();
+                sttRiconoscimento.lang            = 'it-IT';
+                sttRiconoscimento.interimResults  = true;   // mostra testo in tempo reale
+                sttRiconoscimento.continuous      = false;
+                sttRiconoscimento.maxAlternatives = 1;
+
+                sttRiconoscimento.onstart = () => {
+                    sttAttivo = true;
+                    btn.classList.add('ascolto');
+                    btn.textContent = '⏹';
+                };
+
+                sttRiconoscimento.onresult = (e) => {
+                    const campo = document.getElementById(inputId);
+                    let testo = '';
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        testo += e.results[i][0].transcript;
+                    }
+                    campo.value = testo; // aggiorna in tempo reale
+                };
+
+                sttRiconoscimento.onend = () => {
+                    sttAttivo = false;
+                    const b = document.getElementById(sttBtnId);
+                    if (b) { b.classList.remove('ascolto'); b.textContent = '🎤'; }
+                };
+
+                sttRiconoscimento.onerror = (e) => {
+                    sttAttivo = false;
+                    const b = document.getElementById(sttBtnId);
+                    if (b) { b.classList.remove('ascolto'); b.textContent = '🎤'; }
+                    // Messaggi chiari per ogni tipo di errore
+                    const msg = {
+                        'not-allowed':  'Permesso microfono negato. Controlla le impostazioni del browser.',
+                        'no-speech':    null,
+                        'network':      'La dettatura richiede connessione internet (il riconoscimento vocale usa i server del browser). Verifica la connessione e riprova.',
+                        'audio-capture':'Microfono non trovato o non accessibile.',
+                        'aborted':      null
+                    }[e.error] || `Errore microfono (${e.error}). Riprova.`;
+                    if (msg) alert(msg);
+                };
+
+                sttRiconoscimento.start();
+
+            } catch(err) {
+                sttAttivo = false;
+                btn.classList.remove('ascolto');
+                btn.textContent = '🎤';
+                alert('Impossibile avviare il microfono. Verifica i permessi del browser.');
+            }
+        }
+
+        // ── APPLICA TUTTO ─────────────────────────
+        function applicaAccessibilita() {
+            ttsEnabled = localStorage.getItem('tutor_tts') === 'true';
+            ttsSpeed   = parseFloat(localStorage.getItem('tutor_tts_speed') || '1.0');
+            sttEnabled = localStorage.getItem('tutor_stt') === 'true';
+            if (sttEnabled) document.body.classList.add('stt-attivo');
+            else            document.body.classList.remove('stt-attivo');
+            if (!ttsEnabled) svuotaTTS(); // svuota coda se TTS disabilitato
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            caricaUIPreferences();
+            // Le voci TTS si caricano in modo asincrono nel browser
+            if (window.speechSynthesis) {
+                window.speechSynthesis.onvoiceschanged = popolaVoci;
+                popolaVoci();
+            }
+        });
     </script>
 </body>
 </html>
