@@ -290,18 +290,20 @@ def valida_spiegazione_adattiva(spiegazione: str, problema: dict, risposta_corre
         return False, msg + ". 🤔", punteggio, True
 
 def valida_risposta(risposta_utente: str, risposta_corretta: str) -> bool:
-    u = risposta_utente.strip().lower().replace(',', '.').replace(' ', '')
-    c = risposta_corretta.strip().lower().replace(',', '.').replace(' ', '')
-    unita = ['euro', '€', 'eur', 'cm', 'centimetri', 'm', 'metri', 'km', 'kilometri', 'kg', 'kilogrammi', 'g', 'grammi', 'l', 'litri', 'ml', 'millilitri']
-    for unita_misura in unita:
-        u = u.replace(unita_misura, '')
-        c = c.replace(unita_misura, '')
-    u = u.strip()
-    c = c.strip()
+    def pulisci(testo):
+        t = testo.strip().lower().replace(',', '.')
+        numeri = re.findall(r'\d+\.?\d*', t)
+        return numeri[0] if numeri else t.replace(' ', '')
+    u_raw = risposta_utente.strip().lower().replace(',', '.')
+    c_raw = risposta_corretta.strip().lower().replace(',', '.')
+    if u_raw.replace(' ', '') == c_raw.replace(' ', ''): return True
+    u = pulisci(u_raw)
+    c = pulisci(c_raw)
     if u == c: return True
-    try: return float(u) == float(c)
+    try:
+        return abs(float(u) - float(c)) < 0.01
     except: pass
-    if '/' in u and '/' in c: return u == c
+    if '/' in u_raw and '/' in c_raw: return u_raw.replace(' ', '') == c_raw.replace(' ', '')
     return False
 
 def adatta_livello(livello_corrente: str, successo: bool, tentativi: int) -> str:
