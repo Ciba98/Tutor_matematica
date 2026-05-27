@@ -191,6 +191,7 @@
                 <div class="rpg-sprite sprite-boss anim-idle" id="rpg-boss-sprite"></div>
                 <div class="rpg-sprite sprite-player face-pensieroso anim-idle" id="rpg-player-sprite"></div>
             </div>
+            <div id="rpg-quesito-corrente" style="display:none; background:#f3e5f5; padding:10px 14px; border-left:4px solid #9c27b0; border-radius:8px; margin-bottom:10px; font-size:13.5px; color:#4a148c; line-height:1.5;"><b>[ Quesito in corso ]</b><br><span id="rpg-quesito-testo"></span></div>
             <div class="rpg-dialog" id="rpg-dialog-text">Caricamento del combattimento...</div>
             <div class="input-area" style="border: 2px solid var(--bordo); border-radius: 12px; padding: 10px;">
                 <input type="text" id="rpg-input" placeholder="Scrivi la risposta o un comando..." onkeypress="if(event.key==='Enter') inviaInputRPG()">
@@ -312,6 +313,17 @@
             let dannoInflittoBoss = 0;
             let dannoInflittoPlayer = 0;
 
+            // AGGIORNA QUESITO IN CIMA (box fisso separato dal dialogo)
+            const testoProblema = chatState.problema_corrente ? chatState.problema_corrente.testo : (chatState.assess_problema ? chatState.assess_problema.testo : "");
+            const boxQuesito = document.getElementById('rpg-quesito-corrente');
+            const lblQuesito = document.getElementById('rpg-quesito-testo');
+            if (testoProblema) {
+                lblQuesito.textContent = testoProblema;
+                boxQuesito.style.display = 'block';
+            } else {
+                boxQuesito.style.display = 'none';
+            }
+
             data.messages.forEach(m => {
                 if (m.tipo === "tutor" || m.tipo === "sistema") {
                     let testoPulito = m.testo;
@@ -345,20 +357,6 @@
                     }
                     
                     testoPulito = testoPulito.replace("🤔", "").replace("🙂", "").replace("💪", "");
-
-                    // AGGIUNTA PROMEMORIA QUESITO
-                    let isReminderNeeded = testoPulito.includes("Spiega come ci sei") || 
-                                           testoPulito.includes("Non è corretto") || 
-                                           testoPulito.includes("Ancora non è corretto") || 
-                                           testoPulito.includes("Spiega meglio") ||
-                                           testoPulito.includes("Ecco la soluzione");
-                    
-                    if (isReminderNeeded) {
-                        let testoProblema = chatState.problema_corrente ? chatState.problema_corrente.testo : (chatState.assess_problema ? chatState.assess_problema.testo : "");
-                        if (testoProblema) {
-                            testoPulito += `<div style="margin-top:12px; background:#f3e5f5; padding:10px; border-left:4px solid #9c27b0; border-radius:4px; font-size:13.5px; color:#4a148c; line-height:1.4;"><b>[ Quesito in corso ]</b><br>${testoProblema}</div>`;
-                        }
-                    }
 
                     stringaRisposta += testoPulito + "<br><br>";
                 }
@@ -411,8 +409,10 @@
 
             if (rpgPlayerHP <= 0) {
                 dialogBox.innerHTML += "<br><b>[ GAME OVER: HAI PERSO TUTTI I PV. IL BOSS VINCE! ]</b>";
+                document.getElementById('rpg-quesito-corrente').style.display = 'none';
             } else if (rpgBossHP <= 0) {
                 dialogBox.innerHTML += "<br><b>[ VITTORIA: HAI SCONFITTO IL MATH BOSS! ]</b>";
+                document.getElementById('rpg-quesito-corrente').style.display = 'none';
             } else {
                 inp.disabled = false; btn.disabled = false; inp.focus();
             }
