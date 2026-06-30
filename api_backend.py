@@ -148,14 +148,56 @@ def estrai_numeri(testo: str) -> list:
             pass
     return numeri
 
+def _strip_accenti(s: str) -> str:
+    # FIX A: rimuove gli accenti cosi' "piu" matcha "più", "perche" matcha "perché", ecc.
+    for a, b in (('à','a'),('á','a'),('è','e'),('é','e'),('ì','i'),
+                 ('í','i'),('ò','o'),('ó','o'),('ù','u'),('ú','u')):
+        s = s.replace(a, b)
+    return s
+
+def _build_numeri_parole() -> dict:
+    # FIX B: mappa parola->numero per 0-100 (gestisce anche ventuno, ventotto, ventitre...)
+    u = ['zero','uno','due','tre','quattro','cinque','sei','sette','otto','nove']
+    teens = ['dieci','undici','dodici','tredici','quattordici','quindici','sedici',
+             'diciassette','diciotto','diciannove']
+    tens = {20:'venti',30:'trenta',40:'quaranta',50:'cinquanta',60:'sessanta',
+            70:'settanta',80:'ottanta',90:'novanta'}
+    d = {}
+    for i, wn in enumerate(u): d[wn] = i
+    for i, wn in enumerate(teens): d[wn] = 10 + i
+    for t, tw in tens.items():
+        d[tw] = t
+        for ui in range(1, 10):
+            base = tw[:-1] if ui in (1, 8) else tw   # ventuno, ventotto: cade la vocale
+            w = base + ('tre' if ui == 3 else u[ui])
+            d[w] = t + ui
+    d['cento'] = 100
+    for amb in ('una', 'un'):   # troppo ambigue (articoli)
+        d.pop(amb, None)
+    return d
+
+NUMERI_PAROLE = _build_numeri_parole()
+_NUM_PATTERN = re.compile(r'\b(' + '|'.join(sorted(NUMERI_PAROLE, key=len, reverse=True)) + r')\b')
+
+def _parole_in_cifre(testo: str) -> str:
+    # FIX B: converte i numeri scritti a parole in cifre prima dell'analisi
+    t = _strip_accenti(testo.lower())
+    return _NUM_PATTERN.sub(lambda mch: str(NUMERI_PAROLE[mch.group(1)]), t)
+
 def rileva_operazioni_multiple(testo: str) -> list:
-    testo_lower = testo.lower()
+    testo_lower = _strip_accenti(testo.lower())
     operazioni = []
-    keywords_addizione = ['somma', 'più', 'aggiungi', 'totale', '+', 'insieme', 'riceve', 'aumenta', 'unisci']
-    keywords_sottrazione = ['sottrai', 'meno', 'togli', 'resta', '-', 'regala', 'spende', 'perde', 'differenza', 'toglie']
-    keywords_moltiplicazione = ['moltiplica', 'per', 'volte', '×', '*', 'x ', 'prodotto', 'ogni']
-    keywords_divisione = ['dividi', 'diviso', '÷', '/', 'parti', 'ciascun', 'distribuisci']
-    
+    # FIX A: liste senza accenti e arricchite con le storpiature piu' comuni dei bambini
+    keywords_addizione = ['somma', 'sommo', 'sommato', 'piu', 'aggiungi', 'aggiunto', 'totale', '+',
+                          'insieme', 'riceve', 'aumenta', 'unisci', 'addizione', 'addiziono']
+    keywords_sottrazione = ['sottrai', 'sottra', 'sotra', 'sottrazione', 'sotrazione', 'meno', 'togli',
+                           'tolto', 'tolgo', 'resta', '-', 'regala', 'regalo', 'spende', 'speso',
+                           'perde', 'differenza', 'toglie']
+    keywords_moltiplicazione = ['moltiplica', 'moltiplico', 'moltipico', 'moltiplicazione', 'per',
+                               'volte', '×', '*', 'x ', 'prodotto', 'ogni']
+    keywords_divisione = ['dividi', 'divido', 'diviso', 'divizione', 'divisione', '÷', '/',
+                         'parti', 'ciascun', 'distribuisci']
+
     if any(kw in testo_lower for kw in keywords_addizione):
         operazioni.append('addizione')
     if any(kw in testo_lower for kw in keywords_sottrazione):
@@ -224,9 +266,11 @@ def valida_spiegazione_adattiva(spiegazione: str, problema: dict, risposta_corre
         
     punteggio = 0
     feedback = []
-    
+    da_rivedere_forzato = False  # FIX 2: forza la revisione se c'e' un calcolo errato esplicito
+
+    spiegazione_norm = _parole_in_cifre(spiegazione)  # FIX B: numeri a parole -> cifre
     numeri_problema = estrai_numeri(problema['testo'])
-    numeri_spiegazione = estrai_numeri(spiegazione)
+    numeri_spiegazione = estrai_numeri(spiegazione_norm)
     if numeri_problema and numeri_spiegazione:
         numeri_comuni = set(numeri_problema) & set(numeri_spiegazione)
         percentuale_numeri = len(numeri_comuni) / len(numeri_problema)
@@ -238,7 +282,7 @@ def valida_spiegazione_adattiva(spiegazione: str, problema: dict, risposta_corre
         feedback.append("Menziona i numeri del problema")
         
     ops_necessarie = set(rileva_operazioni_multiple(problema['soluzione']))
-    ops_spiegazione = set(rileva_operazioni_multiple(spiegazione))
+    ops_spiegazione = set(rileva_operazioni_multiple(spiegazione_norm))
     if ops_necessarie:
         ops_corrette = ops_necessarie & ops_spiegazione
         percentuale_ops = len(ops_corrette) / len(ops_necessarie)
@@ -254,7 +298,7 @@ def valida_spiegazione_adattiva(spiegazione: str, problema: dict, risposta_corre
             punteggio += 10
             feedback.append("Spiega quali operazioni hai usato")
             
-    calcoli_spiegazione = estrai_calcoli(spiegazione)
+    calcoli_spiegazione = estrai_calcoli(spiegazione_norm)
     if calcoli_spiegazione:
         calcoli_corretti = 0
         calcoli_sbagliati = 0
@@ -263,11 +307,13 @@ def valida_spiegazione_adattiva(spiegazione: str, problema: dict, risposta_corre
             else:
                 calcoli_sbagliati += 1
                 feedback.append(f"Controlla: {int(num1)}{op}{int(num2)}≠{int(ris)}")
-        if calcoli_sbagliati > 0: punteggio -= 10
+        if calcoli_sbagliati > 0:
+            punteggio -= 10
+            da_rivedere_forzato = True  # FIX 2: un calcolo errato va sempre segnalato al docente
         elif calcoli_corretti > 0: punteggio += 15
         
     risposta_norm = risposta_corretta.replace(',', '.').strip()
-    if risposta_norm in spiegazione.replace(',', '.'): punteggio += 10
+    if risposta_norm in spiegazione_norm.replace(',', '.'): punteggio += 10
     else:
         if complessita == 'semplice': feedback.append("Menziona il risultato finale")
         
@@ -279,9 +325,26 @@ def valida_spiegazione_adattiva(spiegazione: str, problema: dict, risposta_corre
     else:
         if complessita != 'semplice': feedback.append("Spiega i passaggi più in dettaglio")
         
-    da_rivedere = punteggio < soglia_da_rivedere
-    if punteggio >= soglia_ottima: return True, "Ottima spiegazione! 💡", punteggio, da_rivedere
-    elif punteggio >= soglia_buona: return True, "Spiegazione buona. 👍", punteggio, da_rivedere
+    # FIX D: per il livello "ottima" serve una verbalizzazione reale, non solo il calcolo nudo
+    # solo token con almeno 2 lettere di fila: esclude i simboli e la 'x' di '3x4=12'
+    parole_alfabetiche = [t for t in spiegazione.split() if re.search(r'[a-zàèéìòù]{2,}', t.lower())]
+    connettivi = ['perche', 'perke', 'xke', 'cosi', 'quindi', 'allora', 'siccome', 'infatti', 'dato', 'poi', 'prima', 'percio']
+    testo_conn = _strip_accenti(spiegazione.lower())
+    ha_connettivo = any(c in testo_conn for c in connettivi)
+    verbalizzazione_ok = (len(parole_alfabetiche) >= 2) or ha_connettivo
+    if ha_connettivo: punteggio += 5          # premia la giustificazione esplicita
+    punteggio = max(0, min(100, punteggio))
+
+    da_rivedere = (punteggio < soglia_da_rivedere) or da_rivedere_forzato
+    if da_rivedere_forzato:
+        # FIX D: un calcolo esplicitamente sbagliato non puo' essere "ottima": si segnala chiaramente
+        return True, "Attenzione: c'è un errore in un calcolo, ricontrolla i passaggi. 🤔", punteggio, True
+    if punteggio >= soglia_ottima and verbalizzazione_ok:
+        return True, "Ottima spiegazione! 💡", punteggio, da_rivedere
+    elif punteggio >= soglia_buona:
+        if not verbalizzazione_ok:
+            return True, "Hai fatto il calcolo giusto! Ora prova a spiegare a parole come hai ragionato. 👍", punteggio, da_rivedere
+        return True, "Spiegazione buona. 👍", punteggio, da_rivedere
     elif punteggio >= soglia_minima:
         msg_base = "Accettabile" + (" per un problema difficile" if complessita == 'complessa' else "")
         return True, msg_base + ". ⚠️", punteggio, da_rivedere
@@ -296,14 +359,19 @@ def valida_risposta(risposta_utente: str, risposta_corretta: str) -> bool:
         return numeri[0] if numeri else t.replace(' ', '')
     u_raw = risposta_utente.strip().lower().replace(',', '.')
     c_raw = risposta_corretta.strip().lower().replace(',', '.')
+    # 1) confronto stringa diretto (cattura anche le frazioni uguali, es. '3/4')
     if u_raw.replace(' ', '') == c_raw.replace(' ', ''): return True
+    # 2) FIX 1: se entrambe sono frazioni e NON sono uguali, sono diverse.
+    #    Va valutato PRIMA di estrarre i numeri: altrimenti '3/4' e '3/5'
+    #    verrebbero confrontate solo sul numeratore e risulterebbero uguali.
+    if '/' in u_raw and '/' in c_raw:
+        return u_raw.replace(' ', '') == c_raw.replace(' ', '')
     u = pulisci(u_raw)
     c = pulisci(c_raw)
     if u == c: return True
     try:
         return abs(float(u) - float(c)) < 0.01
     except: pass
-    if '/' in u_raw and '/' in c_raw: return u_raw.replace(' ', '') == c_raw.replace(' ', '')
     return False
 
 def adatta_livello(livello_corrente: str, successo: bool, tentativi: int) -> str:
@@ -326,7 +394,8 @@ def api_login():
     p = dati.get('password', '').strip()
     
     if u in db:
-        if db[u].get('password') == hash_password(p) or db[u].get('password') == p:
+        # FIX 3: confronto solo con l'hash SHA-256, nessun fallback in chiaro
+        if db[u].get('password') == hash_password(p):
             return jsonify({
                 "status": "success", 
                 "ruolo": db[u].get('ruolo'), 
@@ -588,8 +657,7 @@ def chat_flow():
                 }
                 if username in db:
                     db[username].setdefault("log_sessione", []).append(entry)
-                    if liv_num > db[username].get('livello_massimo', 0) and entry['esito'] == 'CORRETTO':
-                        db[username]['livello_massimo'] = liv_num
+                    # FIX 4: rimossa condizione morta (qui esito e' sempre ERRATO)
                     salva_database(db)
                 
                 messages_out.extend([
@@ -682,9 +750,54 @@ def get_next_problema(pool, state):
     state['problemi_usati'].setdefault(liv, []).append(scelto['testo'])
     return scelto
 
+FILE_ROBOT = "robot_stato.json"
+
+def _carica_stato_robot() -> dict:
+    if os.path.exists(FILE_ROBOT):
+        try:
+            with open(FILE_ROBOT, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+def _salva_stato_robot(d: dict):
+    with open(FILE_ROBOT, "w", encoding="utf-8") as f:
+        json.dump(d, f)
+
+@app.route('/api/robot/comando', methods=['POST'])
+def robot_comando():
+    # Chiamato dalla pagina del tutor: memorizza l'ultimo comando per quel codice robot.
+    dati = request.get_json() or {}
+    codice = (dati.get('codice') or 'DASHBOT').strip().upper()
+    try:
+        cmd = int(dati.get('cmd'))
+    except (TypeError, ValueError):
+        return jsonify({"status": "error", "message": "cmd non valido"}), 400
+    if not (1 <= cmd <= 6):
+        return jsonify({"status": "error", "message": "cmd fuori range (1-6)"}), 400
+    stato = _carica_stato_robot()
+    seq = stato.get(codice, {}).get("seq", 0) + 1
+    stato[codice] = {"seq": seq, "cmd": cmd, "ts": time.time()}
+    _salva_stato_robot(stato)
+    return jsonify({"status": "success", "seq": seq, "cmd": cmd})
+
+@app.route('/api/robot/stato', methods=['GET'])
+def robot_stato():
+    # Interrogato dal robot ogni ~0,8s. Con fmt=txt risponde "SEQ,CMD" (facile da parsare su Arduino).
+    codice = (request.args.get('codice') or 'DASHBOT').strip().upper()
+    voce = _carica_stato_robot().get(codice, {"seq": 0, "cmd": 0})
+    seq = voce.get("seq", 0)
+    cmd = voce.get("cmd", 0)
+    if request.args.get('fmt') == 'txt':
+        return (f"{seq},{cmd}", 200, {'Content-Type': 'text/plain'})
+    return jsonify({"seq": seq, "cmd": cmd})
+
 if __name__ == '__main__':
     carica_database()
     carica_pool_problemi()
     carica_obiettivi()
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    # FIX 5: debug disattivato di default; attivabile con FLASK_DEBUG=1 in sviluppo
+    debug_mode = os.environ.get("FLASK_DEBUG", "0") == "1"
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)

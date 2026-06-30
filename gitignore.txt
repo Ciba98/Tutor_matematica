@@ -1,0 +1,10 @@
+# File dati generati a runtime (non vanno su GitHub)
+database_classe.json
+problemi_per_classe.json
+robot_stato.json
+OBIETTIVI_DIDATTICI_MATEMATICA.md
+
+# Varie
+__pycache__/
+*.pyc
+.DS_Store

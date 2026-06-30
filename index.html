@@ -117,7 +117,7 @@
 <body>
 
     <div class="container active" id="view-login">
-        <div class="login-header-bar"><button class="btn-settings-black" onclick="apriImpostazioni('view-login')">⚙️</button></div>
+        <div class="login-header-bar"><button class="btn-settings-black" id="btn-robot" title="Collega desk robot" onclick="RobotDesk.toggle()" style="margin-right:6px;">🤖</button><button class="btn-settings-black" onclick="apriImpostazioni('view-login')">⚙️</button></div>
         <div class="login-wrap">
             
             <div class="emoji-deco" style="top:10%; left:10%;">📚</div>
@@ -246,6 +246,57 @@
     <script>
         let utenteCorrente = ""; let ruoloCorrente = ""; let classeCorrente = "5"; let chatState = {};
         let poolProblemiGlobal = {}; let obiettiviGlobal = ""; let quesitoIndexCorrente = null; let immagineBase64Corrente = null; let vistaPrecedenteSettings = "view-login"; let typingSpeedMs = 20;
+
+        // ============== DESK ROBOT (DASHBOT) - versione ONLINE ==============
+        // Nessun ponte, nessun PC: la pagina invia i comandi al PROPRIO backend
+        // (stesso sito) e il robot li legge interrogando il backend (polling).
+        // Il "codice" deve combaciare con quello impostato nello sketch del robot.
+        const RobotDesk = {
+            codice: "DASHBOT",
+            attivo: false,
+            ultimoComando: 0,
+            mappa(testo) {
+                const t = (testo || "").toLowerCase();
+                if (t.includes("hai finito i 10") || t.includes("intera sessione")) return 6;
+                if (t.includes("ottima spiegazione")) return 6;
+                if (t.includes("corretto") || t.includes("risposta esatta")) return 4;
+                if (t.includes("spiegazione buona") || t.includes("accettabile") || t.includes("calcolo giusto")) return 5;
+                if (t.includes("esaurito i tentativi") || t.includes("ecco la soluzione")) return 1;
+                if (t.includes("assessment completato")) return 2;
+                if (t.includes("avvio allenamento") || t.includes("come va oggi")) return 3;
+                return 0;
+            },
+            evento(testo, tipo) {
+                if (!this.attivo) return;
+                if (tipo !== "tutor" && tipo !== "sistema") return;
+                const cmd = this.mappa(testo);
+                if (cmd > 0) this.invia(cmd);
+            },
+            invia(cmd) {
+                if (!this.attivo || cmd === this.ultimoComando) return;
+                this.ultimoComando = cmd;
+                fetch('/api/robot/comando', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ codice: this.codice, cmd: cmd })
+                }).catch(() => {});
+            },
+            toggle() {
+                this.attivo = !this.attivo;
+                this.aggiornaPulsante();
+                this.ultimoComando = 0;
+                if (this.attivo) {
+                    this.invia(2);  // si alza
+                    setTimeout(() => { this.ultimoComando = 0; this.invia(3); }, 1200); // poi idle
+                } else {
+                    this.invia(1);  // a terra
+                }
+            },
+            aggiornaPulsante() {
+                const b = document.getElementById("btn-robot");
+                if (b) b.style.color = this.attivo ? "#2e7d32" : "";
+            }
+        };
+        // ====================================================================
 
         // Variabili RPG
         let rpgPlayerHP = 100;
@@ -446,7 +497,7 @@
         async function avviaSessioneAlunno(username, classe) { utenteCorrente = username; ruoloCorrente = 'studente'; classeCorrente = classe; chatState = {}; document.getElementById('chat-box-content').innerHTML = ""; document.getElementById('chat-hud-quesito').textContent = ""; document.getElementById('chat-progressbar').style.width = "0%"; switchView('view-chat'); await inviaMessaggioFlusso(""); }
         function handleChatEnter(e) { if(e.key === 'Enter') inviaMessaggioChat(); }
         async function inviaMessaggioChat() { const inp = document.getElementById('chat-input'); const btn = document.getElementById('btn-invia-chat'); const msg = inp.value.trim(); if(!msg || inp.disabled) return; inp.disabled = true; btn.disabled = true; inp.value = ""; await appendBubble("studente", msg); await inviaMessaggioFlusso(msg); }
-        async function inviaMessaggioFlusso(userMsg) { const inp = document.getElementById('chat-input'); const btn = document.getElementById('btn-invia-chat'); inp.disabled = true; btn.disabled = true; const res = await fetch('/api/chat_flow', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: utenteCorrente, message: userMsg, state: chatState}) }); const data = await res.json(); chatState = data.state; const hud = document.getElementById('chat-hud-quesito'); const progress = document.getElementById('chat-progressbar'); if(chatState.fase === 'allenamento' || chatState.fase === 'attesa_spiegazione' || chatState.fase === 'attesa_ok_prossimo') { let num = chatState.quesito_numero || 1; if(num > 10) num = 10; hud.textContent = `Quesito ${num}/10`; progress.style.width = `${(num / 10) * 100}%`; } else { hud.textContent = ""; progress.style.width = "0%"; } for(let i=0; i<data.messages.length; i++) { const m = data.messages[i]; await appendBubble(m.tipo, m.testo, m.immagine); } inp.disabled = false; btn.disabled = false; inp.focus(); }
+        async function inviaMessaggioFlusso(userMsg) { const inp = document.getElementById('chat-input'); const btn = document.getElementById('btn-invia-chat'); inp.disabled = true; btn.disabled = true; const res = await fetch('/api/chat_flow', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: utenteCorrente, message: userMsg, state: chatState}) }); const data = await res.json(); chatState = data.state; const hud = document.getElementById('chat-hud-quesito'); const progress = document.getElementById('chat-progressbar'); if(chatState.fase === 'allenamento' || chatState.fase === 'attesa_spiegazione' || chatState.fase === 'attesa_ok_prossimo') { let num = chatState.quesito_numero || 1; if(num > 10) num = 10; hud.textContent = `Quesito ${num}/10`; progress.style.width = `${(num / 10) * 100}%`; } else { hud.textContent = ""; progress.style.width = "0%"; } for(let i=0; i<data.messages.length; i++) { const m = data.messages[i]; RobotDesk.evento(m.testo, m.tipo); await appendBubble(m.tipo, m.testo, m.immagine); } inp.disabled = false; btn.disabled = false; inp.focus(); }
         async function appendBubble(tipo, testo, imgBase64=null) { return new Promise((resolve) => { const box = document.getElementById('chat-box-content'); const bubble = document.createElement('div'); bubble.className = `chat-bubble ${tipo}`; let prefix = ""; if(tipo === 'tutor') prefix = "Tutor: "; if(tipo === 'sistema') prefix = "Sistema: "; if(tipo === 'studente') prefix = "Tu: "; box.appendChild(bubble); if (tipo === 'tutor') leggiAdAlta(testo); if (tipo === 'tutor' && typingSpeedMs > 0) { bubble.textContent = prefix; let i = 0; function typeWriter() { if (i < testo.length) { bubble.textContent += testo.charAt(i); i++; box.scrollTop = box.scrollHeight; setTimeout(typeWriter, typingSpeedMs); } else { if(imgBase64) { const img = document.createElement('img'); img.className = "chat-img"; img.src = imgBase64; bubble.appendChild(img); box.scrollTop = box.scrollHeight; } resolve(); } } typeWriter(); } else { bubble.textContent = prefix + testo; if(imgBase64) { const img = document.createElement('img'); img.className = "chat-img"; img.src = imgBase64; bubble.appendChild(img); } box.scrollTop = box.scrollHeight; resolve(); } }); }
         async function avviaDashboardDocente() { switchView('view-docente'); const res = await fetch('/api/teacher/dashboard'); const data = await res.json(); const listContainer = document.getElementById('teacher-studenti-list'); listContainer.innerHTML = ""; if(!data.studenti || data.studenti.length === 0) { listContainer.innerHTML = `<div style="text-align:center;color:gray;padding:20px;">Nessun alunno.</div>`; return; } data.studenti.forEach(s => { const row = document.createElement('div'); row.className = "student-row"; row.onclick = () => apriStoricoDateAlunno(s.username); row.innerHTML = `<div class="student-info"><span class="student-name">${s.username.toUpperCase()}</span><span class="student-meta">Classe ${s.classe}ª | Liv. max: ${s.livello_massimo}/10 | Quesiti: ${s.n_quesiti}</span></div><div style="color:var(--secondario); font-weight:bold;">Registro</div>`; listContainer.appendChild(row); }); }
         async function apriStoricoDateAlunno(username) { switchView('view-report-alunno'); document.getElementById('report-student-title').textContent = `Sessioni di ${username.toUpperCase()}`; const res = await fetch('/api/teacher/student_logs', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: username}) }); const data = await res.json(); const container = document.getElementById('report-sessioni-list'); container.innerHTML = ""; let dateSet = new Set(); let logs = data.log_sessione || []; logs.forEach(l => { if(l.data) dateSet.add(l.data); }); if(dateSet.size === 0) { container.innerHTML = `<div style="text-align:center;color:gray;padding:20px;">Nessuna sessione.</div>`; return; } dateSet.forEach(d => { let qGg = logs.filter(l => l.data === d && l.tipo === 'QUESITO'); let corretti = qGg.filter(l => l.esito === 'CORRETTO').length; let totSec = qGg.reduce((acc, current) => acc + (current.tempo_secondi || 0), 0); let minuti = Math.floor(totSec / 60); const btn = document.createElement('div'); btn.className = "student-row"; btn.onclick = () => apriDettaglioGiornoLog(username, d, logs); btn.innerHTML = `<div><b>Sessione del ${d}</b></div><div class="student-meta">${qGg.length} quesiti | ${corretti}/${qGg.length} corretti | ${minuti} min</div>`; container.appendChild(btn); }); }
