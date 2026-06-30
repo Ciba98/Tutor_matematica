@@ -247,12 +247,11 @@
         let utenteCorrente = ""; let ruoloCorrente = ""; let classeCorrente = "5"; let chatState = {};
         let poolProblemiGlobal = {}; let obiettiviGlobal = ""; let quesitoIndexCorrente = null; let immagineBase64Corrente = null; let vistaPrecedenteSettings = "view-login"; let typingSpeedMs = 20;
 
-        // ============== DESK ROBOT (DASHBOT) - versione ONLINE ==============
-        // Nessun ponte, nessun PC: la pagina invia i comandi al PROPRIO backend
-        // (stesso sito) e il robot li legge interrogando il backend (polling).
-        // Il "codice" deve combaciare con quello impostato nello sketch del robot.
+        // ============== DESK ROBOT (DASHBOT) - via MQTT (istantaneo) ==============
         const RobotDesk = {
-            codice: "DASHBOT",
+            topic: "tutormate_robot/DASHBOT",                 // stesso TOPIC dello sketch
+            brokerWss: "wss://broker.hivemq.com:8884/mqtt",
+            client: null,
             attivo: false,
             ultimoComando: 0,
             mappa(testo) {
@@ -273,34 +272,41 @@
                 if (cmd > 0) this.invia(cmd);
             },
             invia(cmd) {
-                if (!this.attivo || cmd === this.ultimoComando) return;
+                if (!this.attivo || !this.client || cmd === this.ultimoComando) return;
                 this.ultimoComando = cmd;
-                fetch('/api/robot/comando', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ codice: this.codice, cmd: cmd })
-                }).catch(() => {});
+                try { this.client.publish(this.topic, String(cmd)); } catch (e) {}
             },
-            toggle() {
-                this.attivo = !this.attivo;
-                this.aggiornaPulsante();
-                this.ultimoComando = 0;
-                if (this.attivo) {
-                    this.invia(2);  // si alza
-                    setTimeout(() => { this.ultimoComando = 0; this.invia(3); }, 1200); // poi idle
-                } else {
-                    this.invia(1);  // a terra
-                }
+            caricaLib() {
+                return new Promise((res) => {
+                    if (window.mqtt) return res(true);
+                    const s = document.createElement("script");
+                    s.src = "https://unpkg.com/mqtt/dist/mqtt.min.js";
+                    s.onload = () => res(true);
+                    s.onerror = () => res(false);
+                    document.head.appendChild(s);
+                });
+            },
+            async toggle() {
+                if (this.attivo) { this.invia(1); this.attivo = false; this.aggiornaPulsante(); return; }
+                if (!(await this.caricaLib())) { alert("Impossibile caricare la libreria MQTT (serve internet)."); return; }
+                this.client = mqtt.connect(this.brokerWss);
+                this.client.on("connect", () => {
+                    this.attivo = true; this.ultimoComando = 0; this.aggiornaPulsante();
+                    this.invia(2);
+                    setTimeout(() => { this.ultimoComando = 0; this.invia(3); }, 1200);
+                });
+                this.client.on("error", () => { this.attivo = false; this.aggiornaPulsante(); });
+                this.client.on("close", () => { this.attivo = false; this.aggiornaPulsante(); });
             },
             aggiornaPulsante() {
                 const b = document.getElementById("btn-robot");
                 if (!b) return;
-                // lo sfondo si vede anche con l'emoji (il colore del testo no)
                 b.style.background = this.attivo ? "#2e7d32" : "";
                 b.style.borderRadius = "8px";
                 b.title = this.attivo ? "Desk robot COLLEGATO (clic per scollegare)" : "Collega desk robot";
             }
         };
-        // ====================================================================
+        // =========================================================================
 
         // Variabili RPG
         let rpgPlayerHP = 100;
