@@ -256,11 +256,17 @@
             ultimoComando: 0,
             mappa(testo) {
                 const t = (testo || "").toLowerCase();
-                if (t.includes("hai finito i 10") || t.includes("intera sessione")) return 6;
-                if (t.includes("ottima spiegazione")) return 6;
+                // positivi forti
+                if (t.includes("hai finito i 10") || t.includes("intera sessione") || t.includes("ottima spiegazione")) return 6;
+                // NEGATIVI prima di "corretto" (perche' "non e corretto" contiene "corretto")
+                if (t.includes("non è corretto") || t.includes("non e corretto") ||
+                    t.includes("esaurito i tentativi") || t.includes("ecco la soluzione")) return 7;   // sbagliato
+                if (t.includes("spiega meglio") || t.includes("accettabile") ||
+                    t.includes("calcolo giusto") || t.includes("ricontrolla") ||
+                    t.includes("errore in un calcolo")) return 8;                                      // da migliorare
+                // positivi
+                if (t.includes("spiegazione buona")) return 5;
                 if (t.includes("corretto") || t.includes("risposta esatta")) return 4;
-                if (t.includes("spiegazione buona") || t.includes("accettabile") || t.includes("calcolo giusto")) return 5;
-                if (t.includes("esaurito i tentativi") || t.includes("ecco la soluzione")) return 1;
                 if (t.includes("assessment completato")) return 2;
                 if (t.includes("avvio allenamento") || t.includes("come va oggi")) return 3;
                 return 0;
