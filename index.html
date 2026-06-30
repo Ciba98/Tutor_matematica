@@ -293,7 +293,11 @@
             },
             aggiornaPulsante() {
                 const b = document.getElementById("btn-robot");
-                if (b) b.style.color = this.attivo ? "#2e7d32" : "";
+                if (!b) return;
+                // lo sfondo si vede anche con l'emoji (il colore del testo no)
+                b.style.background = this.attivo ? "#2e7d32" : "";
+                b.style.borderRadius = "8px";
+                b.title = this.attivo ? "Desk robot COLLEGATO (clic per scollegare)" : "Collega desk robot";
             }
         };
         // ====================================================================
