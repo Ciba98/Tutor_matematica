@@ -343,7 +343,7 @@ def valida_spiegazione_adattiva(spiegazione: str, problema: dict, risposta_corre
         return True, "Ottima spiegazione! 💡", punteggio, da_rivedere
     elif punteggio >= soglia_buona:
         if not verbalizzazione_ok:
-            return True, "Hai fatto il calcolo giusto! Ora prova a spiegare a parole come hai ragionato. 👍", punteggio, da_rivedere
+            return False, "Hai fatto il calcolo giusto! Ora prova a spiegare a parole come hai ragionato. 👍", punteggio, da_rivedere
         return True, "Spiegazione buona. 👍", punteggio, da_rivedere
     elif punteggio >= soglia_minima:
         msg_base = "Accettabile" + (" per un problema difficile" if complessita == 'complessa' else "")
@@ -495,6 +495,7 @@ def chat_flow():
             "risposte_correnti": [],
             "quesito_t_start": time.time(),
             "allenamento_t_start": time.time(),
+            "corretti_sessione": 0,
             "problemi_usati": {"facile": [], "medio": [], "difficile": []}
         }
         return jsonify({
@@ -597,6 +598,7 @@ def chat_flow():
                 "tipo": "ASSESSMENT", "classe": state['classe_studente'], "domanda": prob['testo'],
                 "tentativi": state['assess_risposte'], "livello_assegnato": state['livello_corrente'], 
                 "esito": state['assess_esito'], "tempo_secondi": round(tempo_assess, 1),
+                "ragionamento": message,
                 "punteggio_spiegazione": punteggio, "da_rivedere": da_rivedere
             }
             if username in db:
@@ -670,7 +672,7 @@ def chat_flow():
                 state['livello_corrente'] = adatta_livello(state['livello_corrente'], False, state['tentativi_correnti'])
                 
                 if state['quesito_numero'] > 10:
-                    messages_out.append({"tipo": "sistema", "testo": "🏁 Hai finito i 10 quesiti! Ottimo lavoro!"})
+                    messages_out.append({"tipo": "sistema", "testo": f"🏁 Hai finito! Hai risposto bene a {state.get('corretti_sessione', 0)} quesiti su 10. Ottimo lavoro! 🎉"})
                 else:
                     messages_out.append({"tipo": "sistema", "testo": "Scrivi 'ok' per il prossimo."})
 
@@ -702,17 +704,18 @@ def chat_flow():
                 {"tipo": "sistema", "testo": f"Quesito {state['quesito_numero']} completato ✅"}
             ])
             
+            state['corretti_sessione'] = state.get('corretti_sessione', 0) + 1
             state['quesito_numero'] += 1
             state['livello_corrente'] = adatta_livello(state['livello_corrente'], True, state['tentativi_correnti'])
             
             if state['quesito_numero'] > 10:
-                messages_out.append({"tipo": "sistema", "testo": "🏁 Hai finito i 10 quesiti! Ottimo lavoro!"})
+                messages_out.append({"tipo": "sistema", "testo": f"🏁 Hai finito! Hai risposto bene a {state.get('corretti_sessione', 0)} quesiti su 10. Ottimo lavoro! 🎉"})
             else:
                 messages_out.append({"tipo": "sistema", "testo": "Scrivi 'ok' per il prossimo."})
 
     elif fase == "attesa_ok_prossimo":
         if state['quesito_numero'] > 10:
-            messages_out.append({"tipo": "sistema", "testo": "🏁 Hai completato l'intera sessione! Puoi uscire o guardare i risultati."})
+            messages_out.append({"tipo": "sistema", "testo": f"🏁 Sessione completata! {state.get('corretti_sessione', 0)} risposte giuste su 10. 👏 Puoi chiudere: la maestra vedrà i tuoi risultati."})
         elif message.lower() in ['ok', 'si', 'sì', 'vai']:
             state['fase'] = "allenamento"
             prob = get_next_problema(pool, state)
